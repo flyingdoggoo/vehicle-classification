@@ -1,0 +1,21 @@
+flowchart TD
+    A[Define labels and keywords] --> B[Crawl images from Naver and DuckDuckGo]
+    B --> C[Save raw images by label]
+    C --> D[Remove corrupted and too-small images]
+    D --> E[Convert to RGB JPEG and rename files]
+    E --> F[Detect duplicates with pHash/dHash]
+    F --> G{Hamming distance <= threshold?}
+    G -- Yes --> H[Move to data/duplicates]
+    G -- No --> I[Keep in data/cleaned]
+    I --> J[Manual review and reject wrong labels]
+    J --> K[Dataset statistics and visualization]
+    K --> L[Upload cleaned dataset to Kaggle]
+    L --> M[Stratified train/val/test split]
+    M --> N[Preprocess and augment train images]
+    N --> O[Train MobileNet from scratch]
+    N --> P[Train ResNet from scratch]
+    O --> Q[Evaluate on test set]
+    P --> Q
+    Q --> R[Compare metrics and visualize predictions]
+    R --> S[Save best models and artifacts]
+

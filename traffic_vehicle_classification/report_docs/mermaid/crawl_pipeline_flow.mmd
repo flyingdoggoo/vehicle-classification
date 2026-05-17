@@ -1,0 +1,18 @@
+flowchart TD
+    A[Start crawl pipeline] --> B[Read configs/labels.yaml]
+    B --> C[Load labels, keywords, target count, sources]
+    C --> D[Count current raw and cleaned images]
+    D --> E{Label already enough?}
+    E -- Yes --> F[Skip this label]
+    E -- No --> G[Select shuffled keyword subset]
+    G --> H{Source}
+    H -- Naver --> I[Run AutoCrawler wrapper]
+    H -- DuckDuckGo --> J[Run DDGS image search]
+    I --> K[Download images to temporary crawl run]
+    J --> K
+    K --> L[Move/copy images into data/raw/label]
+    L --> M[Write crawl metadata CSV]
+    M --> N{More labels missing?}
+    N -- Yes --> D
+    N -- No --> O[Finish crawl round]
+

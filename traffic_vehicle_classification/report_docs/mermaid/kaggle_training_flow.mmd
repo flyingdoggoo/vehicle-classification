@@ -1,0 +1,13 @@
+flowchart TD
+    A[Local data/cleaned folder] --> B[Compress to traffic_vehicle_cleaned.zip]
+    B --> C[Upload ZIP as Kaggle Dataset]
+    C --> D[Attach Kaggle Dataset to Notebook]
+    D --> E[Notebook auto-detects or extracts ZIP]
+    E --> F[Load class folders]
+    F --> G[Create train/validation/test split]
+    G --> H[Run all notebook sections]
+    H --> I[Train MobileNet and ResNet]
+    I --> J[Generate metrics and figures]
+    J --> K[Save /kaggle/working/training_artifacts]
+    K --> L[Download models, CSV reports, and figures]
+

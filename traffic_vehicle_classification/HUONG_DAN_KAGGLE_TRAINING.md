@@ -308,7 +308,8 @@ DATA_MODE = 'cleaned'
 
 ```python
 IMG_SIZE = (224, 224)
-BATCH_SIZE = 32
+PER_REPLICA_BATCH_SIZE = 32
+# Nếu Kaggle dùng T4x2, notebook tự đặt global BATCH_SIZE = 64
 EPOCHS = 30
 LEARNING_RATE = 1e-3
 TRAIN_RATIO = 0.70
@@ -323,8 +324,10 @@ EXPORT_SPLIT_FOLDERS = False
 Ý nghĩa:
 
 - `RUN_TRAINING = True`: bật train MobileNet và ResNet.
+- `PER_REPLICA_BATCH_SIZE = 32`: mỗi GPU xử lý 32 ảnh; với T4x2 global batch là 64.
 - `MAX_IMAGES_PER_CLASS = None`: dùng toàn bộ ảnh.
 - `EXPORT_SPLIT_FOLDERS = False`: chỉ lưu split dataframe, không cần xuất folder split mới.
+- Notebook tự dùng `tf.distribute.MirroredStrategy` khi phát hiện 2 GPU và bật `mixed_float16` khi có GPU.
 
 Nếu muốn test nhanh notebook trước khi train thật:
 
@@ -379,6 +382,9 @@ Notebook không dùng pretrained weights. Trong phần markdown có nhắc `weig
 ## 9. Lưu Ý Khi Train Trên Kaggle
 
 - Bật GPU trong Kaggle Notebook: `Settings -> Accelerator -> GPU`.
+- Nếu có tùy chọn, chọn GPU T4x2 để notebook dùng cả hai GPU qua `MirroredStrategy`.
+- Khi dùng T4x2, global batch size mặc định là `32 x 2 = 64`.
+- Nếu gặp lỗi hết VRAM, giảm `PER_REPLICA_BATCH_SIZE` từ `32` xuống `16`.
 - Nếu bộ dữ liệu lớn, lần đầu load ảnh có thể hơi chậm.
 - Train từ đầu không dùng transfer learning nên cần nhiều epoch hơn và dữ liệu sạch hơn.
 - Nếu accuracy chưa đạt 85%, ưu tiên cải thiện dữ liệu trước:

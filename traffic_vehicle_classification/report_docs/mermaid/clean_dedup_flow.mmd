@@ -1,0 +1,18 @@
+flowchart TD
+    A[Read images from data/raw/label] --> B[Open image with Pillow]
+    B --> C{Image readable?}
+    C -- No --> D[Reject corrupted image]
+    C -- Yes --> E{Width and height >= 128?}
+    E -- No --> F[Reject too-small image]
+    E -- Yes --> G[Convert to RGB]
+    G --> H[Save as JPEG with standard name]
+    H --> I[Compute perceptual hash]
+    I --> J[Compare hash with previous images in same label]
+    J --> K{Hamming distance <= threshold}
+    K -- Yes --> L[Move duplicate sample to data/duplicates]
+    K -- No --> M[Keep image in data/cleaned]
+    M --> N[Manual review grid]
+    N --> O{Wrong label or poor quality?}
+    O -- Yes --> P[Move to data/rejected]
+    O -- No --> Q[Keep final cleaned sample]
+

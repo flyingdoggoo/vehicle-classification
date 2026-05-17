@@ -1,0 +1,19 @@
+flowchart TD
+    A[Input data/cleaned on Kaggle] --> B[Build dataframe: image_path, label, width, height, channel, file_size]
+    B --> C[Dataset statistics and sample visualization]
+    C --> D[Stratified split 70/15/15]
+    D --> E[Resize images to 224x224]
+    E --> F[Normalize pixels to 0-1]
+    F --> G[Apply augmentation only on train set]
+    G --> H[Train MobileNet from scratch]
+    G --> I[Train ResNet from scratch]
+    H --> J[Save MobileNet best checkpoint]
+    I --> K[Save ResNet best checkpoint]
+    J --> L[Evaluate MobileNet on test set]
+    K --> M[Evaluate ResNet on test set]
+    L --> N[Accuracy, Precision, Recall, F1-score]
+    M --> N
+    N --> O[Confusion matrix and classification report]
+    O --> P[Visualize correct and wrong predictions]
+    P --> Q[Save final artifacts]
+
