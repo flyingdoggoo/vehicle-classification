@@ -64,7 +64,7 @@ def main() -> None:
     parser.add_argument("--method", choices=["phash", "dhash", "ahash"], default=None)
     parser.add_argument("--threshold", type=int, default=None)
     parser.add_argument("--action", choices=["move", "copy", "delete"], default="move")
-    parser.add_argument("--within-label-only", action="store_true")
+    parser.add_argument("--within-label-only", action="store_true", default=None)
     args = parser.parse_args()
 
     config = load_config(args.config)
@@ -72,6 +72,7 @@ def main() -> None:
     dedup_cfg = config.get("deduplication", {})
     method = args.method or dedup_cfg.get("hash_method", "phash")
     threshold = args.threshold if args.threshold is not None else int(dedup_cfg.get("hamming_threshold", 6))
+    within_label_only = args.within_label_only if args.within_label_only is not None else bool(dedup_cfg.get("within_label_only", False))
     input_root = resolve_project_path(args.input_root)
     duplicates_root = resolve_project_path(args.duplicates_root)
 
@@ -88,7 +89,7 @@ def main() -> None:
         duplicate_match = None
         duplicate_distance = None
         for kept_label, kept_path, kept_hash in kept:
-            if args.within_label_only and kept_label != label:
+            if within_label_only and kept_label != label:
                 continue
             distance = current_hash - kept_hash
             if distance <= threshold:

@@ -2,7 +2,6 @@ project_name: traffic_vehicle_classification
 target_raw_per_label: 1500
 
 sources:
-  - google
   - naver
   - duckduckgo
 
@@ -14,7 +13,8 @@ image_cleaning:
 
 deduplication:
   hash_method: phash
-  hamming_threshold: 6
+  hamming_threshold: 4
+  within_label_only: true
 
 split:
   train_ratio: 0.70
@@ -26,14 +26,18 @@ autocrawler:
   threads: 4
   full_resolution: false
   no_gui: auto
-  limit_per_keyword: 120
+  limit_per_keyword: 60
+
+keyword_strategy:
+  shuffle_keywords: true
+  keywords_per_run: 12
 
 duckduckgo:
   region: us-en
   safesearch: moderate
   backend: duckduckgo
   size: Large
-  max_results_per_keyword: 180
+  max_results_per_keyword: 80
   timeout_seconds: 15
 
 labels:
@@ -44,9 +48,28 @@ labels:
       - mountain bicycle
       - city bicycle
       - bicycle on road
-      - bike vehicle
       - electric bicycle
       - racing bicycle
+      - bicycle photo
+      - bicycle street photo
+      - bicycle side view
+      - bicycle front view
+      - cyclist bicycle road
+      - commuter bicycle
+      - urban bicycle
+      - folding bicycle
+      - touring bicycle
+      - gravel bicycle
+      - bmx bicycle
+      - bicycle parked
+      - bicycle lane
+      - bicycle outdoor
+      - real bicycle
+      - bicycle in traffic
+      - bicycle close up
+      - bicycle rider
+      - bicycle vehicle photo
+      - modern bicycle
   - name: boat
     keywords:
       - boat
@@ -57,6 +80,26 @@ labels:
       - boat on water
       - motor boat
       - river boat
+      - boat photo
+      - real boat
+      - boat side view
+      - boat front view
+      - lake boat
+      - sea boat
+      - wooden boat
+      - sail boat
+      - ferry boat
+      - tour boat
+      - rescue boat
+      - cargo boat
+      - cabin boat
+      - inflatable boat
+      - boat harbor
+      - boat dock
+      - boat outdoor
+      - boat vehicle
+      - boat travel
+      - boat close up
   - name: bus
     keywords:
       - bus
@@ -67,6 +110,26 @@ labels:
       - passenger bus
       - bus on road
       - transit bus
+      - bus photo
+      - bus street photo
+      - bus side view
+      - bus front view
+      - intercity bus
+      - double decker bus
+      - electric bus
+      - airport bus
+      - shuttle bus large
+      - articulated bus
+      - tour bus
+      - bus stop
+      - bus highway
+      - bus terminal
+      - real bus
+      - bus in traffic
+      - modern bus
+      - urban bus
+      - bus vehicle photo
+      - coach bus side
   - name: car
     keywords:
       - car
@@ -77,6 +140,26 @@ labels:
       - hatchback car
       - compact car
       - car on street
+      - car photo
+      - car side view
+      - car front view
+      - car rear view
+      - car on road
+      - car in traffic
+      - city car
+      - suv car
+      - coupe car
+      - station wagon car
+      - electric car
+      - hybrid car
+      - parked car
+      - modern car
+      - real car
+      - car highway
+      - car street photo
+      - car vehicle photo
+      - white car road
+      - black car street
   - name: helicopter
     keywords:
       - helicopter
@@ -87,6 +170,26 @@ labels:
       - helicopter landing
       - transport helicopter
       - police helicopter
+      - helicopter photo
+      - real helicopter
+      - helicopter side view
+      - helicopter front view
+      - helicopter on helipad
+      - medical helicopter
+      - news helicopter
+      - coast guard helicopter
+      - utility helicopter
+      - cargo helicopter
+      - private helicopter
+      - helicopter airport
+      - helicopter close up
+      - helicopter rotor
+      - helicopter outdoor
+      - helicopter vehicle
+      - helicopter in sky
+      - helicopter takeoff
+      - helicopter ground
+      - modern helicopter
   - name: minibus
     keywords:
       - minibus
@@ -97,6 +200,26 @@ labels:
       - small bus
       - commuter minibus
       - minibus on road
+      - minibus photo
+      - minibus side view
+      - minibus front view
+      - minibus street
+      - minibus vehicle
+      - minibus taxi
+      - airport minibus
+      - hotel minibus
+      - school minibus
+      - tour minibus
+      - minibus highway
+      - minibus passenger van
+      - microbus vehicle
+      - small passenger bus
+      - shuttle bus minibus
+      - commuter van minibus
+      - real minibus
+      - minibus in traffic
+      - minibus parked
+      - white minibus
   - name: motorcycle
     keywords:
       - motorcycle
@@ -107,16 +230,55 @@ labels:
       - touring motorcycle
       - street motorcycle
       - motor scooter
+      - motorcycle photo
+      - motorcycle side view
+      - motorcycle front view
+      - motorcycle street photo
+      - motorcycle in traffic
+      - cruiser motorcycle
+      - dirt motorcycle
+      - adventure motorcycle
+      - electric motorcycle
+      - delivery motorcycle
+      - police motorcycle
+      - motorcycle rider
+      - parked motorcycle
+      - real motorcycle
+      - motorcycle highway
+      - motorcycle close up
+      - motorcycle vehicle photo
+      - urban motorcycle
+      - motorcycle outdoor
+      - scooter on road
   - name: taxi
     keywords:
       - taxi
       - yellow taxi
       - city taxi
       - taxi cab
-      - cab car
       - taxi on street
       - airport taxi
       - metered taxi
+      - taxi photo
+      - taxi side view
+      - taxi front view
+      - taxi street photo
+      - taxi in traffic
+      - yellow cab
+      - black cab taxi
+      - taxi stand
+      - taxi vehicle
+      - taxi car with sign
+      - taxi roof sign
+      - taxi passenger car
+      - city cab taxi
+      - airport cab
+      - real taxi
+      - taxi road
+      - taxi pickup
+      - taxi parked
+      - modern taxi
+      - taxi service car
   - name: train
     keywords:
       - train
@@ -127,6 +289,26 @@ labels:
       - locomotive train
       - commuter train
       - railway train
+      - train photo
+      - train side view
+      - train front view
+      - train station
+      - train tracks
+      - electric train
+      - diesel train
+      - metro train
+      - subway train
+      - regional train
+      - intercity train
+      - cargo train
+      - bullet train
+      - real train
+      - train outdoor
+      - train platform
+      - train vehicle photo
+      - train close up
+      - modern train
+      - locomotive side view
   - name: truck
     keywords:
       - truck
@@ -137,3 +319,23 @@ labels:
       - truck on road
       - box truck
       - freight truck
+      - truck photo
+      - truck side view
+      - truck front view
+      - truck highway
+      - truck street photo
+      - dump truck
+      - tanker truck
+      - tow truck
+      - garbage truck
+      - fire truck
+      - flatbed truck
+      - container truck
+      - lorry truck
+      - heavy truck
+      - real truck
+      - truck in traffic
+      - truck vehicle photo
+      - commercial truck
+      - truck trailer
+      - moving truck

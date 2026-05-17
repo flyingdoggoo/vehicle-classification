@@ -114,7 +114,7 @@ cd traffic_vehicle_classification
 Nếu muốn chạy tự động đến khi đủ 1500 ảnh sạch mỗi class:
 
 ```bash
-python scripts/run_pipeline_until_ready.py --sources google,naver,duckduckgo --target-clean-per-label 1500 --batch-size 300
+python scripts/run_pipeline_until_ready.py --sources naver,duckduckgo --target-clean-per-label 1500 --batch-size 300
 ```
 
 Log tiến độ:
@@ -203,27 +203,56 @@ Trước khi upload Kaggle, kiểm tra:
 - Mỗi class nên có khoảng 1000 ảnh trở lên.
 - Không class nào quá ít so với các class còn lại.
 
-## 5. Chuẩn Bị Folder Upload Lên Kaggle
+## 5. Chuẩn Bị File Zip Upload Lên Kaggle
 
-Tạo Kaggle Dataset với cấu trúc nên như sau:
+Khuyến nghị nén folder `data/cleaned` thành một file zip để upload lên Kaggle.
+
+Từ thư mục `traffic_vehicle_classification/`, cấu trúc trước khi nén nên là:
 
 ```text
-traffic-vehicle-classification/
+data/
+└── cleaned/
+    ├── bicycle/
+    ├── boat/
+    ├── bus/
+    ├── car/
+    ├── helicopter/
+    ├── minibus/
+    ├── motorcycle/
+    ├── taxi/
+    ├── train/
+    └── truck/
+```
+
+Trên Windows PowerShell, có thể nén bằng lệnh:
+
+```powershell
+Compress-Archive -Path data\cleaned -DestinationPath traffic_vehicle_cleaned.zip -Force
+```
+
+File zip nên có dạng:
+
+```text
+traffic_vehicle_cleaned.zip
+└── cleaned/
+    ├── bicycle/
+    ├── boat/
+    ├── bus/
+    └── ...
+```
+
+Hoặc cũng được nếu zip có dạng:
+
+```text
+traffic_vehicle_cleaned.zip
 └── data/
     └── cleaned/
         ├── bicycle/
         ├── boat/
-        ├── bus/
-        ├── car/
-        ├── helicopter/
-        ├── minibus/
-        ├── motorcycle/
-        ├── taxi/
-        ├── train/
-        └── truck/
+        └── ...
 ```
 
-Bạn có thể nén/upload cả folder `data/cleaned/`, hoặc upload folder `data/` có chứa `cleaned/`.
+Notebook hiện đã hỗ trợ cả hai dạng trên. Nếu Kaggle giữ nguyên file `.zip` trong `/kaggle/input`, notebook sẽ tự giải nén sang `/kaggle/working/extracted_datasets/`.
 
 Không cần upload:
 
@@ -246,7 +275,7 @@ reports/figures/
 Trong Section 2 của notebook có biến:
 
 ```python
-DATA_ROOT = find_dataset_root()
+DATA_ROOT, DATA_MODE = find_dataset_paths()
 ```
 
 Notebook tự tìm các path phổ biến như:
@@ -256,18 +285,21 @@ Notebook tự tìm các path phổ biến như:
 /kaggle/input/traffic-vehicle-classification/cleaned
 /kaggle/input/*/data/cleaned
 /kaggle/input/*/cleaned
+/kaggle/input/**/*.zip
 ```
 
-Nếu Kaggle Dataset của bạn có tên khác, chỉ cần sửa tay:
+Nếu Kaggle Dataset của bạn có tên khác, notebook vẫn sẽ quét toàn bộ `/kaggle/input`. Nếu vẫn không tự nhận, chỉ cần sửa tay:
 
 ```python
 DATA_ROOT = Path('/kaggle/input/<ten-dataset-cua-ban>/data/cleaned')
+DATA_MODE = 'cleaned'
 ```
 
 Ví dụ:
 
 ```python
 DATA_ROOT = Path('/kaggle/input/vehicle-cleaned-dataset/data/cleaned')
+DATA_MODE = 'cleaned'
 ```
 
 ## 7. Cấu Hình Train Trong Notebook

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import random
 import shutil
 import subprocess
 import sys
@@ -82,6 +83,46 @@ def unique_raw_path(raw_root: Path, label: str, source: str, keyword: str, suffi
         index += 1
 
 
+def unique_keywords(keywords: list[str]) -> list[str]:
+    seen: set[str] = set()
+    result: list[str] = []
+    for keyword in keywords:
+        normalized = " ".join(str(keyword).strip().lower().split())
+        if not normalized or normalized in seen:
+            continue
+        seen.add(normalized)
+        result.append(str(keyword).strip())
+    return result
+
+
+def select_keywords_for_run(label_item: dict, config: dict, current_count: int) -> list[str]:
+    """Select a diverse keyword subset so repeated crawl rounds do not reuse the same queries."""
+    keywords = unique_keywords(label_item.get("keywords", []))
+    strategy = config.get("keyword_strategy", {})
+    keywords_per_run = int(strategy.get("keywords_per_run", 0) or 0)
+    shuffle_keywords = bool(strategy.get("shuffle_keywords", True))
+
+    if not keywords:
+        return []
+    if keywords_per_run <= 0 or keywords_per_run >= len(keywords):
+        selected = list(keywords)
+    else:
+        label = label_item.get("name", "")
+        # Rotate based on current raw count, then optionally shuffle. This keeps later rounds
+        # from always starting at the same high-ranking search queries.
+        offset = (current_count // max(1, keywords_per_run)) % len(keywords)
+        rotated = keywords[offset:] + keywords[:offset]
+        selected = rotated[:keywords_per_run]
+        if len(selected) < keywords_per_run:
+            selected.extend(rotated[: keywords_per_run - len(selected)])
+
+        if shuffle_keywords:
+            rng = random.Random(f"{label}:{current_count}:{int(time.time() // 3600)}")
+            rng.shuffle(selected)
+
+    return selected
+
+
 def build_autocrawler_command(
     autocrawler_path: Path,
     config: dict,
@@ -115,13 +156,19 @@ def build_autocrawler_command(
     ]
 
 
-def copy_autocrawler_outputs(run_dir: Path, raw_root: Path, label: str, target_count: int) -> list[dict]:
+def copy_autocrawler_outputs(run_dir: Path, raw_root: Path, label: str, target_count: int, keyword_order: list[str] | None = None) -> list[dict]:
     rows: list[dict] = []
     download_dir = run_dir / "download"
     if not download_dir.exists():
         return rows
 
-    for keyword_dir in sorted(path for path in download_dir.iterdir() if path.is_dir()):
+    keyword_rank = {keyword: index for index, keyword in enumerate(keyword_order or [])}
+    keyword_dirs = sorted(
+        (path for path in download_dir.iterdir() if path.is_dir()),
+        key=lambda path: (keyword_rank.get(path.name, len(keyword_rank)), path.name),
+    )
+
+    for keyword_dir in keyword_dirs:
         keyword = keyword_dir.name
         for src_path in sorted(keyword_dir.iterdir()):
             if src_path.name.endswith("_done") or not src_path.is_file():
@@ -172,7 +219,8 @@ def run_autocrawler_for_label(
         return []
 
     label = label_item["name"]
-    keywords = label_item["keywords"]
+    current_count = count_images_in_label_dir(raw_root / label)
+    keywords = select_keywords_for_run(label_item, config, current_count)
     run_dir = PROJECT_ROOT / "data" / "crawl_runs" / label / f"autocrawler_{time.strftime('%Y%m%d_%H%M%S')}"
     command = build_autocrawler_command(
         autocrawler_path=autocrawler_path,
@@ -184,6 +232,7 @@ def run_autocrawler_for_label(
 
     if dry_run:
         print(f"[DRY RUN] AutoCrawler label={label}")
+        print(f"  selected {len(keywords)} / {len(unique_keywords(label_item.get('keywords', [])))} keywords")
         print(f"  keywords: {', '.join(keywords)}")
         print(f"  cwd: {run_dir}")
         print(f"  command: {' '.join(command)}")
@@ -207,7 +256,7 @@ def run_autocrawler_for_label(
     if result.returncode != 0:
         print(f"[WARN] AutoCrawler returned code {result.returncode} for {label}")
 
-    return copy_autocrawler_outputs(run_dir, raw_root, label, target_count)
+    return copy_autocrawler_outputs(run_dir, raw_root, label, target_count, keywords)
 
 
 def download_ddg_image(image_url: str, dest_path: Path, timeout: int) -> tuple[int, int]:
@@ -237,8 +286,11 @@ def run_duckduckgo_for_label(
     dry_run: bool,
 ) -> list[dict]:
     label = label_item["name"]
+    keywords = select_keywords_for_run(label_item, config, count_images_in_label_dir(raw_root / label))
     if dry_run:
         print(f"[DRY RUN] DuckDuckGo fallback label={label}")
+        print(f"  selected {len(keywords)} / {len(unique_keywords(label_item.get('keywords', [])))} keywords")
+        print(f"  keywords: {', '.join(keywords)}")
         return []
 
     try:
@@ -250,7 +302,7 @@ def run_duckduckgo_for_label(
     timeout = int(cfg.get("timeout_seconds", 15))
     rows: list[dict] = []
 
-    for keyword in label_item["keywords"]:
+    for keyword in keywords:
         remaining = target_count - count_images_in_label_dir(raw_root / label)
         if remaining <= 0:
             break
@@ -305,7 +357,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Crawl vehicle images into data/raw/<label>.")
     parser.add_argument("--config", default="configs/labels.yaml")
     parser.add_argument("--labels", default=None, help="Comma-separated labels, e.g. car,bus,truck.")
-    parser.add_argument("--sources", default=None, help="Comma-separated sources: google,naver,duckduckgo.")
+    parser.add_argument("--sources", default=None, help="Comma-separated sources: naver,duckduckgo. Google is supported but not recommended because of captcha.")
     parser.add_argument("--limit-per-label", type=int, default=None)
     parser.add_argument("--autocrawler-limit-per-keyword", type=int, default=None)
     parser.add_argument("--threads", type=int, default=None)
@@ -321,7 +373,7 @@ def main() -> None:
     raw_root = resolve_project_path(args.raw_root)
     ensure_label_dirs(raw_root, labels)
 
-    selected_sources = set(parse_csv_arg(args.sources) or config.get("sources", ["google", "naver", "duckduckgo"]))
+    selected_sources = set(parse_csv_arg(args.sources) or config.get("sources", ["naver", "duckduckgo"]))
     invalid_sources = selected_sources - {"google", "naver", "duckduckgo"}
     if invalid_sources:
         raise ValueError(f"Unsupported sources: {', '.join(sorted(invalid_sources))}")

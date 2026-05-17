@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import math
 import subprocess
 import sys
 import time
@@ -70,8 +71,54 @@ def print_counts(title: str, raw_counts: dict[str, int], clean_counts: dict[str,
         print(f"{label:<14}{raw_counts.get(label, 0):>8}{cleaned:>10}{missing:>10}{status:>12}")
 
 
+def parse_sources(value: str) -> list[str]:
+    return [source.strip() for source in value.split(",") if source.strip()]
+
+
+def crawl_missing_label(label: str, args, raw_root: Path) -> None:
+    sources = parse_sources(args.sources)
+    if not sources:
+        return
+
+    if len(sources) == 1:
+        current_raw = count_images(raw_root / label)
+        raw_goal = current_raw + max(1, args.batch_size)
+        print(f"\n[Crawl] label={label}, source={sources[0]}, current_raw={current_raw}, next_raw_goal={raw_goal}")
+        run_command(
+            [
+                sys.executable,
+                "scripts/crawl_images.py",
+                "--labels",
+                label,
+                "--sources",
+                sources[0],
+                "--limit-per-label",
+                str(raw_goal),
+            ]
+        )
+        return
+
+    per_source_batch = max(1, math.ceil(args.batch_size / len(sources)))
+    for source in sources:
+        current_raw = count_images(raw_root / label)
+        raw_goal = current_raw + per_source_batch
+        print(f"\n[Crawl] label={label}, source={source}, current_raw={current_raw}, next_raw_goal={raw_goal}")
+        run_command(
+            [
+                sys.executable,
+                "scripts/crawl_images.py",
+                "--labels",
+                label,
+                "--sources",
+                source,
+                "--limit-per-label",
+                str(raw_goal),
+            ]
+        )
+
+
 def run_processing_steps(args) -> None:
-    run_command([sys.executable, "scripts/remove_corrupted_images.py", "--overwrite"])
+    run_command([sys.executable, "scripts/remove_corrupted_images.py", "--overwrite", "--clear-output"])
     run_command(
         [
             sys.executable,
@@ -82,6 +129,25 @@ def run_processing_steps(args) -> None:
             str(args.hamming_threshold),
             "--action",
             "move",
+        ]
+        + (["--within-label-only"] if getattr(args, "within_label_only", False) else [])
+    )
+    run_command(
+        [
+            sys.executable,
+            "scripts/balance_dataset.py",
+            "--max-per-label",
+            str(args.target),
+            "--action",
+            "delete",
+        ]
+    )
+    run_command(
+        [
+            sys.executable,
+            "scripts/cleanup_duplicates.py",
+            "--keep-total",
+            str(args.keep_duplicate_samples),
         ]
     )
     run_command([sys.executable, "scripts/dataset_statistics.py"])
@@ -99,7 +165,9 @@ def main() -> None:
     parser.add_argument("--hash-method", choices=["phash", "dhash", "ahash"], default=None)
     parser.add_argument("--hamming-threshold", type=int, default=None)
     parser.add_argument("--skip-final-split", action="store_true")
+    parser.add_argument("--skip-initial-processing", action="store_true")
     parser.add_argument("--progress-csv", default="reports/pipeline_progress.csv")
+    parser.add_argument("--keep-duplicate-samples", type=int, default=100)
     args = parser.parse_args()
 
     config = load_config(args.config)
@@ -107,8 +175,11 @@ def main() -> None:
     selected_items = get_label_items(config, parse_csv_arg(args.labels))
     labels = [item["name"] for item in selected_items]
     target = args.target_clean_per_label or int(config.get("target_raw_per_label", 1500))
+    args.target = target
     args.hash_method = args.hash_method or config.get("deduplication", {}).get("hash_method", "phash")
-    args.hamming_threshold = args.hamming_threshold if args.hamming_threshold is not None else int(config.get("deduplication", {}).get("hamming_threshold", 6))
+    dedup_cfg = config.get("deduplication", {})
+    args.hamming_threshold = args.hamming_threshold if args.hamming_threshold is not None else int(dedup_cfg.get("hamming_threshold", 6))
+    args.within_label_only = bool(dedup_cfg.get("within_label_only", False))
 
     raw_root = resolve_project_path("data/raw")
     cleaned_root = resolve_project_path("data/cleaned")
@@ -120,10 +191,14 @@ def main() -> None:
     print(f"Target cleaned images per label: {target}")
     print(f"Labels: {', '.join(labels)}")
     if args.sources is None:
-        args.sources = ",".join(config.get("sources", ["google", "naver", "duckduckgo"]))
+        args.sources = ",".join(config.get("sources", ["naver", "duckduckgo"]))
 
     print(f"Sources: {args.sources}")
     print(f"Batch size: {args.batch_size}")
+
+    if not args.skip_initial_processing:
+        print("\nInitial processing: rebuild cleaned data, deduplicate, balance, and update statistics.")
+        run_processing_steps(args)
 
     while True:
         round_index += 1
@@ -153,25 +228,10 @@ def main() -> None:
             break
 
         for label in missing_labels:
-            current_raw = raw_counts.get(label, 0)
-            raw_goal = current_raw + max(1, args.batch_size)
-            print(f"\n[Crawl] label={label}, current_raw={current_raw}, next_raw_goal={raw_goal}")
-            run_command(
-                [
-                    sys.executable,
-                    "scripts/crawl_images.py",
-                    "--labels",
-                    label,
-                    "--sources",
-                    args.sources,
-                    "--limit-per-label",
-                    str(raw_goal),
-                ]
-            )
+            crawl_missing_label(label, args, raw_root)
 
         run_processing_steps(args)
 
-    run_processing_steps(args)
     if not args.skip_final_split:
         run_command([sys.executable, "scripts/split_dataset.py", "--clear-output"])
 

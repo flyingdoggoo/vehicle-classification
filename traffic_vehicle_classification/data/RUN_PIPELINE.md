@@ -40,7 +40,7 @@ Neu thay command AutoCrawler hien ra dung, co the bat dau crawl that.
 
 ## 2. Crawl That Theo Tung Class
 
-Nen crawl thu nho truoc de kiem tra Chrome/Selenium:
+Nen crawl thu nho truoc de kiem tra Naver/Chrome/Selenium:
 
 ```bash
 python scripts/crawl_images.py --labels car --limit-per-label 30
@@ -70,7 +70,7 @@ Log nguon crawl, keyword va duong dan anh:
 reports/crawl_metadata.csv
 ```
 
-Neu Google/Naver bi loi do Selenium hoac thay doi giao dien, co the chay DuckDuckGo fallback:
+Google hay bi captcha, vi vay config mac dinh da bo Google va dung `naver,duckduckgo`. Neu Naver bi loi do Selenium hoac thay doi giao dien, co the chay rieng DuckDuckGo:
 
 ```bash
 python scripts/crawl_images.py --sources duckduckgo --labels car --limit-per-label 300
@@ -96,7 +96,7 @@ reports/cleaning_report.csv
 Dung pHash hoac dHash, so sanh Hamming distance. Neu distance nho hon hoac bang threshold thi coi la anh trung/gan trung.
 
 ```bash
-python scripts/remove_duplicate_images.py --method phash --threshold 6 --action move
+python scripts/remove_duplicate_images.py --method phash --threshold 4 --action move --within-label-only
 ```
 
 Anh trung duoc chuyen vao:
@@ -106,11 +106,27 @@ data/duplicates/<label>/
 reports/duplicates.csv
 ```
 
-Neu chi muon so sanh trung trong tung label, them:
+Pipeline mac dinh nen so sanh trung trong tung label. Neu so sanh toan dataset, nhieu class giong nhau nhu `car`, `taxi`, `bus`, `minibus` co the bi loai qua tay.
+
+## 4.1. Can Bang Dataset Ve Toi Da 1500 Anh/Label
+
+Sau khi deduplicate, neu label nao vuot chi tieu, cat bot de giu dataset can bang:
 
 ```bash
---within-label-only
+python scripts/balance_dataset.py --max-per-label 1500 --action delete
 ```
+
+Lenh nay chi tac dong `data/cleaned/`, khong xoa `data/raw/`.
+
+## 4.2. Don Folder Duplicate
+
+Folder `data/duplicates/` co the rat lon vi anh trung duoc chuyen vao day qua nhieu vong. De giai phong dung luong nhung van giu mau phuc vu bao cao:
+
+```bash
+python scripts/cleanup_duplicates.py --keep-total 100
+```
+
+Lenh nay giu lai 100 anh duplicate ngau nhien va xoa phan con lai.
 
 ## 5. Loc Thu Cong
 
@@ -220,14 +236,15 @@ RUN_TRAINING = True
 Neu muon script tu lap `crawl -> clean -> deduplicate -> statistics -> check count`, dung:
 
 ```bash
-python scripts/run_pipeline_until_ready.py --sources google,naver,duckduckgo --target-clean-per-label 1500 --batch-size 300
+python scripts/run_pipeline_until_ready.py --sources naver,duckduckgo --target-clean-per-label 1500 --batch-size 300
 ```
 
 Giai thich:
 
 - `--target-clean-per-label 1500`: moi label can dat 1500 anh sach trong `data/cleaned/<label>/`.
 - `--batch-size 300`: moi vong crawl them toi da 300 anh raw cho moi label dang thieu.
-- `--sources google,naver,duckduckgo`: dung AutoCrawler cho Google/Naver va DuckDuckGo fallback, phu hop muc tieu 1500 anh sach/label.
+- `--sources naver,duckduckgo`: dung AutoCrawler cho Naver va DuckDuckGo fallback. Bo Google de tranh captcha.
+- Pipeline se rebuild `data/cleaned/` sach tu `data/raw/`, deduplicate trong tung label, balance moi label ve toi da 1500 anh, don `data/duplicates/` con 100 mau, roi moi kiem tra label nao can crawl tiep.
 - Neu chi muon chay khong can Chrome, dung `--sources duckduckgo`, nhung co the khong du 1500 anh/label.
 - Co the dung lai giua chung; chay lai lenh tren se resume dua tren so anh hien co.
 

@@ -51,6 +51,17 @@ def clean_image(src_path: Path, dest_path: Path, min_width: int, min_height: int
         return "rejected", f"unreadable:{exc}", "", ""
 
 
+def clear_label_outputs(root: Path, labels: list[str]) -> None:
+    root.mkdir(parents=True, exist_ok=True)
+    for label in labels:
+        label_dir = root / label
+        if label_dir.exists():
+            for path in label_dir.rglob("*"):
+                if path.is_file():
+                    path.unlink(missing_ok=True)
+        label_dir.mkdir(parents=True, exist_ok=True)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Validate, normalize, and rename raw images.")
     parser.add_argument("--config", default="configs/labels.yaml")
@@ -60,6 +71,7 @@ def main() -> None:
     parser.add_argument("--bad-policy", choices=["none", "copy", "move", "delete"], default="copy")
     parser.add_argument("--report", default="reports/cleaning_report.csv")
     parser.add_argument("--overwrite", action="store_true")
+    parser.add_argument("--clear-output", action="store_true", help="Delete existing files in output label folders before rebuilding cleaned data.")
     args = parser.parse_args()
 
     config = load_config(args.config)
@@ -74,6 +86,9 @@ def main() -> None:
     bad_root = resolve_project_path(args.bad_root)
     rows: list[dict] = []
     counters = {label: 1 for label in labels}
+
+    if args.clear_output:
+        clear_label_outputs(output_root, labels)
 
     for label in labels:
         (output_root / label).mkdir(parents=True, exist_ok=True)
