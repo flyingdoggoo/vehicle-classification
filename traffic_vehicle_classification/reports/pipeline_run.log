@@ -1,0 +1,64 @@
+Target cleaned images per label: 1500
+Labels: bicycle, boat, bus, car, helicopter, minibus, motorcycle, taxi, train, truck
+Sources: duckduckgo
+Batch size: 300
+
+Before round 1
+------------------------------------------------------------------------
+label              raw   cleaned   missing      status
+bicycle              0         0      1500   NEED_MORE
+boat                 0         0      1500   NEED_MORE
+bus                  0         0      1500   NEED_MORE
+car                  4         4      1496   NEED_MORE
+helicopter           0         0      1500   NEED_MORE
+minibus              0         0      1500   NEED_MORE
+motorcycle           0         0      1500   NEED_MORE
+taxi                 0         0      1500   NEED_MORE
+train                0         0      1500   NEED_MORE
+truck                0         0      1500   NEED_MORE
+
+[Crawl] label=bicycle, current_raw=0, next_raw_goal=300
+
+$ C:\Users\Admin\AppData\Local\Programs\Python\Python310\python.exe scripts/crawl_images.py --labels bicycle --sources duckduckgo --limit-per-label 300
+Project root: D:\Workspace\Nam4\KHDL\vehicle-classification\traffic_vehicle_classification
+Selected sources: duckduckgo
+Target raw images per label: 300
+[START] bicycle: current=0, target=300
+[DuckDuckGo] bicycle: keyword='bicycle', remaining=300
+[WARN] Failed to download DDG image for bicycle: cannot identify image file <_io.BytesIO object at 0x00000262D971FBA0>
+[WARN] Failed to download DDG image for bicycle: cannot identify image file <_io.BytesIO object at 0x00000262D973C860>
+[WARN] Failed to download DDG image for bicycle: 403 Client Error: Forbidden for url: https://roadbikedatabase.com/wp-content/uploads/2023/05/2021-State-Bicycle-Co.-Single-Speed-City-Bike-The-Azure-768x432.jpeg
+[WARN] Failed to download DDG image for bicycle: 403 Client Error: Forbidden for url: https://roadbikedatabase.com/wp-content/uploads/2023/05/2021-State-Bicycle-Co.-Single-Speed-City-Bike-The-Elliston-768x424.jpeg
+[DuckDuckGo] bicycle: keyword='road bicycle', remaining=269
+[WARN] Failed to download DDG image for bicycle: 403 Client Error: Forbidden for url: https://racyclesport.com/image/catalog/banners/images-frames-road.jpg
+[WARN] Failed to download DDG image for bicycle: 400 Client Error: Use thumbnail sizes listed on https://w.wiki/GHai for url: https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Look_795_30th_Anniversary_Dura-Ace_9100-Mavic_Custom_Build_(30636542393).jpg/1200px-Look_795_30th_Anniversary_Dura-Ace_9100-Mavic_Custom_Build_(30636542393).jpg
+[WARN] Failed to download DDG image for bicycle: 403 Client Error: Forbidden for url: https://www.liveabout.com/thmb/6dzoZVmLmvSXmXrsr5GEFLUUU9k=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/RoadBike-58de814f3df78c5162807c64.jpg
+[WARN] Failed to download DDG image for bicycle: 403 Client Error: Forbidden for url: https://haidelibikes.com/wp-content/uploads/2025/05/CR068-disc-brake-road-bike-frame-10.jpg
+[DuckDuckGo] bicycle: keyword='mountain bicycle', remaining=238
+[WARN] Failed to download DDG image for bicycle: 403 Client Error: Forbidden for url: https://storage.googleapis.com/fm-coresites-assets/dirt_new/wp-content/uploads/2016/06/2017trekfuel22.jpg
+[WARN] Failed to download DDG image for bicycle: 403 Client Error: Forbidden for url: https://images.singletracks.com/blog/wp-content/uploads/2025/03/sitewrap_692811_left_1170.jpg
+[WARN] Failed to download DDG image for bicycle: 403 Client Error: Forbidden for url: https://superbbicycle.com/wp-content/uploads/2024/09/Tips-for-Navigating-Tough-Terrain-on-a-Mountain-Bike.jpg
+[WARN] Failed to download DDG image for bicycle: 403 Client Error: Forbidden for url: https://www.outsideonline.com/wp-content/uploads/2025/05/Canyon-Spectral-Trail-Mountain-Bike_Tom-Richards-Max-Barron.jpg
+[WARN] Failed to download DDG image for bicycle: 403 Client Error: Forbidden for url: https://images.singletracks.com/blog/wp-content/uploads/2025/09/sitewrap_702926_right_1170.jpg
+[WARN] Failed to download DDG image for bicycle: 403 Client Error: Forbidden for url: https://mbaction.com/wp-content/uploads/2025/06/Mix_6_MasonMiller7-15-24_e-1152x1536.jpg
+[WARN] Failed to download DDG image for bicycle: 403 Client Error: Forbidden for url: https://images.singletracks.com/blog/wp-content/uploads/2025/10/kingdom-trails-hero-750x500.jpg
+[DuckDuckGo] bicycle: keyword='city bicycle', remaining=210
+[WARN] Failed to download DDG image for bicycle: 404 Client Error: Not Found for url: https://bikeget.com/wp-content/uploads/2024/02/urban-bikes-practical-city-commuting-and-errands-1068x610.png
+[WARN] Failed to download DDG image for bicycle: 404 Client Error: Not Found for url: https://bikeget.com/wp-content/uploads/2023/11/city-bikes-practical-and-durable-urban-bicycles.png
+[WARN] Failed to download DDG image for bicycle: 404 Client Error: Not Found for url: https://www.herocycles.com/on/demandware.static/-/Sites-HeroCycles-Library/default/dw9203ce39/PLP/Topbanner/City.jpg
+[WARN] Failed to download DDG image for bicycle: 403 Client Error: Forbidden for url: https://pedalynx.com/wp-content/uploads/2025/08/4564.jpg
+[DuckDuckGo] bicycle: keyword='bicycle on road', remaining=179
+[WARN] Failed to download DDG image for bicycle: 403 Client Error: Forbidden for url: https://cdn.pixabay.com/photo/2023/02/12/12/22/bicycle-7784982_1280.jpg
+[WARN] Failed to download DDG image for bicycle: 418 Client Error: I'm a teapot for url: https://www.publiclands.com/blog/a/bike-safety-and-cycling-rules-of-the-road/_jcr_content/root/container/teaser.coreimg.jpeg/1671812342310/sept-batch1-article3-road-bike-traffic-safety---draft-1.jpeg
+[WARN] Failed to download DDG image for bicycle: 401 Client Error: Unauthorized for url: https://bikeaton.com/wp-content/uploads/2023/01/cycling-with-traffic.jpg
+[WARN] Failed to download DDG image for bicycle: cannot identify image file <_io.BytesIO object at 0x00000262D982C590>
+[WARN] Failed to download DDG image for bicycle: HTTPSConnectionPool(host='www.newsilike.in', port=443): Max retries exceeded with url: /wp-content/uploads/Bike-Riding-in-Traffic-700x392.jpeg (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.newsilike.in', port=443) at 0x262d98216c0>, 'Connection to www.newsilike.in timed out. (connect timeout=15)'))
+[DuckDuckGo] bicycle: keyword='bike vehicle', remaining=149
+[DuckDuckGo] bicycle: keyword='electric bicycle', remaining=114
+[DuckDuckGo] bicycle: keyword='racing bicycle', remaining=79
+[WARN] Failed to download DDG image for bicycle: 403 Client Error: Forbidden for url: https://mathewbike.com/wp-content/uploads/2024/05/Hire-bike-for-triathlon.png
+[DONE] bicycle: raw_count=255
+
+[Crawl] label=boat, current_raw=0, next_raw_goal=300
+
+$ C:\Users\Admin\AppData\Local\Programs\Python\Python310\python.exe scripts/crawl_images.py --labels boat --sources duckduckgo --limit-per-label 300

@@ -1,0 +1,29 @@
+# Ignore generated/crawled dataset contents.
+# Keep this guide file, .gitignore files, and .gitkeep placeholders so GitHub preserves the folder structure.
+
+raw/**
+cleaned/**
+duplicates/**
+rejected/**
+manual_review/**
+crawl_runs/**
+splits/**
+
+!raw/
+!cleaned/
+!duplicates/
+!rejected/
+!manual_review/
+!crawl_runs/
+!splits/
+
+!raw/**/
+!cleaned/**/
+!duplicates/**/
+!rejected/**/
+!manual_review/**/
+!splits/**/
+
+!**/.gitkeep
+!**/.gitignore
+!RUN_PIPELINE.md

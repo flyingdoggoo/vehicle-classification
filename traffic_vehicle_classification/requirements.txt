@@ -1,0 +1,16 @@
+opencv-python
+pillow
+imagehash
+numpy
+pandas
+matplotlib
+seaborn
+scikit-learn
+tensorflow
+tqdm
+pyyaml
+jupyter
+ddgs
+requests
+selenium
+webdriver-manager

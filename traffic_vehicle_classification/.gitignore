@@ -1,0 +1,44 @@
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.pytest_cache/
+.cache/
+
+# Large local data. Keep directory structure through .gitkeep files.
+data/raw/**
+data/cleaned/**
+data/duplicates/**
+data/rejected/**
+data/manual_review/**
+data/crawl_runs/**
+data/splits/**
+!data/raw/
+!data/cleaned/
+!data/duplicates/
+!data/rejected/
+!data/manual_review/
+!data/crawl_runs/
+!data/splits/
+!data/raw/**/
+!data/cleaned/**/
+!data/duplicates/**/
+!data/rejected/**/
+!data/manual_review/**/
+!data/splits/**/
+!data/**/.gitkeep
+!data/**/.gitignore
+
+# Generated reports and model artifacts.
+reports/*.csv
+reports/*.html
+reports/figures/*.png
+reports/figures/*.jpg
+*.keras
+*.h5
+*.pb
+*.tflite
+
+# Local environment files.
+.env
+.venv/
+venv/

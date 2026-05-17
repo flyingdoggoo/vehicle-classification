@@ -1,0 +1,139 @@
+project_name: traffic_vehicle_classification
+target_raw_per_label: 1500
+
+sources:
+  - google
+  - naver
+  - duckduckgo
+
+image_cleaning:
+  min_width: 128
+  min_height: 128
+  output_format: jpg
+  jpeg_quality: 95
+
+deduplication:
+  hash_method: phash
+  hamming_threshold: 6
+
+split:
+  train_ratio: 0.70
+  val_ratio: 0.15
+  test_ratio: 0.15
+  random_seed: 42
+
+autocrawler:
+  threads: 4
+  full_resolution: false
+  no_gui: auto
+  limit_per_keyword: 120
+
+duckduckgo:
+  region: us-en
+  safesearch: moderate
+  backend: duckduckgo
+  size: Large
+  max_results_per_keyword: 180
+  timeout_seconds: 15
+
+labels:
+  - name: bicycle
+    keywords:
+      - bicycle
+      - road bicycle
+      - mountain bicycle
+      - city bicycle
+      - bicycle on road
+      - bike vehicle
+      - electric bicycle
+      - racing bicycle
+  - name: boat
+    keywords:
+      - boat
+      - speed boat
+      - fishing boat
+      - small boat
+      - passenger boat
+      - boat on water
+      - motor boat
+      - river boat
+  - name: bus
+    keywords:
+      - bus
+      - city bus
+      - public bus
+      - coach bus
+      - school bus
+      - passenger bus
+      - bus on road
+      - transit bus
+  - name: car
+    keywords:
+      - car
+      - sedan car
+      - road car
+      - vehicle car
+      - family car
+      - hatchback car
+      - compact car
+      - car on street
+  - name: helicopter
+    keywords:
+      - helicopter
+      - rescue helicopter
+      - military helicopter
+      - civilian helicopter
+      - helicopter flying
+      - helicopter landing
+      - transport helicopter
+      - police helicopter
+  - name: minibus
+    keywords:
+      - minibus
+      - mini bus
+      - passenger minibus
+      - shuttle minibus
+      - van minibus
+      - small bus
+      - commuter minibus
+      - minibus on road
+  - name: motorcycle
+    keywords:
+      - motorcycle
+      - motorbike
+      - scooter motorcycle
+      - sport motorcycle
+      - motorcycle on road
+      - touring motorcycle
+      - street motorcycle
+      - motor scooter
+  - name: taxi
+    keywords:
+      - taxi
+      - yellow taxi
+      - city taxi
+      - taxi cab
+      - cab car
+      - taxi on street
+      - airport taxi
+      - metered taxi
+  - name: train
+    keywords:
+      - train
+      - passenger train
+      - freight train
+      - high speed train
+      - train on railway
+      - locomotive train
+      - commuter train
+      - railway train
+  - name: truck
+    keywords:
+      - truck
+      - cargo truck
+      - delivery truck
+      - pickup truck
+      - semi truck
+      - truck on road
+      - box truck
+      - freight truck
