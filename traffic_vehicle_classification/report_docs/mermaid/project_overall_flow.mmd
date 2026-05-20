@@ -1,43 +1,23 @@
 flowchart TB
-
-%% TOP ROW
-subgraph TOP[Data Collection & Cleaning]
-direction LR
-    A[Define labels and keywords]
-    B[Crawl images]
-    C[Save raw images]
-    D[Clean invalid images]
-    E[Convert and rename]
-    F[Detect duplicates]
-    G{Duplicate?}
-
-    A --> B --> C --> D --> E --> F --> G
-end
-
-%% BOTTOM ROW
-subgraph BOTTOM[Preparation, Training & Evaluation]
-direction LR
-    I[Keep cleaned images]
-    J[Manual review]
-    K[Statistics]
-    L[Upload to Kaggle]
-    M[Train / Val / Test split]
-    N[Preprocess and augment]
-    O[Train MobileNet]
-    P[Train ResNet50]
-    Q[Evaluate]
-    R[Compare results]
-    S[Save best models]
-
-    I --> J --> K --> L --> M --> N
-    N --> O
-    N --> P
-    O --> Q
-    P --> Q
-    Q --> R --> S
-end
-
-H[Move to duplicates]
-
-G -- Yes --> H
-G -- No --> I
+    A[configs/labels.yaml: 9 classes, keywords, target 1200/class] --> B[Crawl missing labels]
+    B --> C[data/raw/class]
+    C --> D[Validate images with Pillow]
+    D --> E[Reject unreadable or smaller than 128x128]
+    D --> F[Convert RGB JPEG, quality 95, rename class_000001.jpg]
+    F --> G[data/cleaned/class]
+    G --> H[pHash duplicate check, Hamming <= 4, within same class]
+    H --> I{Near duplicate?}
+    I -- Yes --> J[data/duplicates/class and duplicates.csv]
+    I -- No --> K[Keep cleaned image]
+    K --> L[Balance to max 1200/class and drop noisy label taxi]
+    L --> M[Manual review when needed]
+    M --> N[Dataset statistics and figures]
+    N --> O[Final cleaned dataset: 10,767 images]
+    O --> P[Upload cleaned class folders to Kaggle dataset]
+    P --> Q[MobileNet notebook]
+    P --> R[ResNet notebook]
+    Q --> S[MobileNetV2, weights=None, single phase training]
+    R --> T[ResNet50V2, weights=None, single phase training]
+    S --> U[Test evaluation and artifacts]
+    T --> U
+    U --> V[Compare accuracy, macro precision, recall, F1, params, time]
