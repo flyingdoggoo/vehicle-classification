@@ -1,0 +1,7 @@
+flowchart TD
+    A["Input 224x224x3"] --> B["Augmentation khi train"]
+    B --> C["Rescale pixel về miền -1 đến 1"]
+    C --> D["MobileNetV2 backbone"]
+    D --> E["GlobalAveragePooling2D"]
+    E --> F["Dropout 0.40"]
+    F --> G["Dense 9 lớp với softmax"]

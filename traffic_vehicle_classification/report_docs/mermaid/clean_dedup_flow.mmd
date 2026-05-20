@@ -1,18 +1,20 @@
 flowchart TD
-    A[Read images from data/raw/label] --> B[Open image with Pillow]
-    B --> C{Image readable?}
-    C -- No --> D[Reject corrupted image]
-    C -- Yes --> E{Width and height >= 128?}
-    E -- No --> F[Reject too-small image]
-    E -- Yes --> G[Convert to RGB]
-    G --> H[Save as JPEG with standard name]
-    H --> I[Compute perceptual hash]
-    I --> J[Compare hash with previous images in same label]
-    J --> K{Hamming distance <= threshold}
-    K -- Yes --> L[Move duplicate sample to data/duplicates]
-    K -- No --> M[Keep image in data/cleaned]
-    M --> N[Manual review grid]
-    N --> O{Wrong label or poor quality?}
-    O -- Yes --> P[Move to data/rejected]
-    O -- No --> Q[Keep final cleaned sample]
-
+    A["data raw theo từng nhãn"] --> B["remove_corrupted_images py"]
+    B --> C["Mở ảnh bằng Pillow và EXIF transpose"]
+    C --> D{"Ảnh đọc được và kích thước từ 128?"}
+    D -- "Không" --> E["Đưa vào data rejected"]
+    D -- "Có" --> F["Chuyển ảnh sang RGB"]
+    F --> G["Lưu JPEG quality 95 và đổi tên"]
+    G --> H["data cleaned theo từng nhãn"]
+    H --> I["remove_duplicate_images py"]
+    I --> J["Tính perceptual hash"]
+    J --> K["So sánh hash trong cùng nhãn"]
+    K --> L{"Hamming distance nhỏ hơn hoặc bằng 4?"}
+    L -- "Có" --> M["Đưa vào data duplicates và ghi log"]
+    L -- "Không" --> N["Giữ ảnh trong data cleaned"]
+    N --> O["balance_dataset py giới hạn 1200 ảnh mỗi nhãn"]
+    O --> P["Rà soát thủ công bằng review grid"]
+    P --> Q{"Quyết định review"}
+    Q -- "Loại hoặc chuyển" --> R["Chuyển file đến thư mục phù hợp"]
+    Q -- "Giữ" --> S["Mẫu cleaned cuối cùng"]
+    S --> T["dataset_statistics py tạo CSV và biểu đồ"]

@@ -1,18 +1,20 @@
 flowchart TD
-    A[Start crawl pipeline] --> B[Read configs/labels.yaml]
-    B --> C[Load labels, keywords, target count, sources]
-    C --> D[Count current raw and cleaned images]
-    D --> E{Label already enough?}
-    E -- Yes --> F[Skip this label]
-    E -- No --> G[Select shuffled keyword subset]
-    G --> H{Source}
-    H -- Naver --> I[Run AutoCrawler wrapper]
-    H -- DuckDuckGo --> J[Run DDGS image search]
-    I --> K[Download images to temporary crawl run]
-    J --> K
-    K --> L[Move/copy images into data/raw/label]
-    L --> M[Write crawl metadata CSV]
-    M --> N{More labels missing?}
-    N -- Yes --> D
-    N -- No --> O[Finish crawl round]
-
+    A["Bắt đầu một lượt crawl"] --> B["Đọc configs labels yaml"]
+    B --> C["Load label source keyword và target"]
+    C --> D["Đếm ảnh hiện có trong data raw"]
+    D --> E{"Đã đủ ảnh thô cho nhãn?"}
+    E -- "Có" --> F["Bỏ qua nhãn đó"]
+    E -- "Chưa" --> G["Chọn nhóm keyword chưa lặp nhiều"]
+    G --> H["Xoay keyword theo số lượng hiện có"]
+    H --> I{"Nguồn crawl"}
+    I -- "Naver" --> J["Chạy AutoCrawler với keywords txt"]
+    I -- "DuckDuckGo" --> K["Tìm ảnh bằng DDGS"]
+    J --> L["Copy output từ AutoCrawler"]
+    K --> M["Tải image URL bằng requests"]
+    L --> N["Lưu file duy nhất vào data raw"]
+    M --> N
+    N --> O["Đọc width height nếu có thể"]
+    O --> P["Ghi reports crawl metadata csv"]
+    P --> Q{"Còn nhãn cần crawl?"}
+    Q -- "Có" --> D
+    Q -- "Không" --> R["Kết thúc lượt crawl"]
