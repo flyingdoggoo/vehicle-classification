@@ -1,4 +1,4 @@
-# BÁO CÁO ĐỒ ÁN KHOA HỌC DỮ LIỆU
+﻿# BÁO CÁO ĐỒ ÁN KHOA HỌC DỮ LIỆU
 
 ## Đề tài
 
@@ -23,9 +23,9 @@
 
 Bài toán phân loại phương tiện giao thông từ ảnh là một bài toán thị giác máy tính có tính ứng dụng cao trong quản lý giao thông, phân tích camera đô thị, hệ thống giám sát bến bãi, thống kê luồng phương tiện và xây dựng các hệ thống hỗ trợ giao thông thông minh. Trong đồ án này, nhóm xây dựng một pipeline hoàn chỉnh để thu thập dữ liệu ảnh từ Internet, làm sạch dữ liệu, lọc trùng, chia tập dữ liệu, tiền xử lý ảnh, huấn luyện và đánh giá hai mô hình học sâu là MobileNet và ResNet.
 
-Tập dữ liệu của đề tài gồm 10 nhãn chính: `bicycle`, `boat`, `bus`, `car`, `helicopter`, `minibus`, `motorcycle`, `taxi`, `train`, `truck`. Dữ liệu được thu thập bằng quá trình crawl ảnh từ các nguồn tìm kiếm ảnh như Naver và DuckDuckGo, kết hợp công cụ AutoCrawler cho các nguồn được hỗ trợ. Trong quá trình thử nghiệm, Google Images có hiện tượng CAPTCHA nên không được chọn làm nguồn crawl chính trong pipeline cuối. Sau khi crawl, dữ liệu được chuẩn hóa cấu trúc thư mục theo từng nhãn, loại bỏ ảnh lỗi, loại bỏ ảnh quá nhỏ, chuẩn hóa định dạng JPEG RGB, đổi tên thống nhất, lọc ảnh trùng lặp bằng perceptual hashing và Hamming distance, sau đó chuẩn bị để upload lên Kaggle huấn luyện mô hình.
+Tập dữ liệu của đề tài (phiên bản thực nghiệm cuối) gồm 9 nhãn chính: `bicycle`, `boat`, `bus`, `car`, `helicopter`, `minibus`, `motorcycle`, `train`, `truck` (đã loại `taxi` để giảm nhiễu nhãn). Dữ liệu được thu thập bằng quá trình crawl ảnh từ các nguồn tìm kiếm ảnh như Naver và DuckDuckGo, kết hợp công cụ AutoCrawler cho các nguồn được hỗ trợ. Trong quá trình thử nghiệm, Google Images có hiện tượng CAPTCHA nên không được chọn làm nguồn crawl chính trong pipeline cuối. Sau khi crawl, dữ liệu được chuẩn hóa cấu trúc thư mục theo từng nhãn, loại bỏ ảnh lỗi, loại bỏ ảnh quá nhỏ, chuẩn hóa định dạng JPEG RGB, đổi tên thống nhất, lọc ảnh trùng lặp bằng perceptual hashing và Hamming distance, sau đó chuẩn bị để upload lên Kaggle huấn luyện mô hình.
 
-Về mô hình hóa, nhóm xây dựng MobileNet và ResNet từ đầu bằng TensorFlow/Keras. Đề tài không sử dụng pretrained weights, không dùng transfer learning và không fine-tuning từ mô hình đã huấn luyện trước. MobileNet được lựa chọn do sử dụng depthwise separable convolution, giúp giảm số lượng tham số và chi phí tính toán. ResNet được lựa chọn do có residual block và skip connection, giúp cải thiện khả năng lan truyền gradient trong mạng sâu. Hai mô hình được đánh giá bằng Accuracy, Precision, Recall, F1-score, confusion matrix, classification report, biểu đồ loss/accuracy và trực quan hóa các ảnh dự đoán đúng/sai trên test set.
+Về mô hình hóa, nhóm sử dụng hai kiến trúc CNN phổ biến là MobileNetV2 và ResNet50 bằng TensorFlow/Keras. MobileNetV2 được lựa chọn do sử dụng depthwise separable convolution, giúp giảm số lượng tham số và chi phí tính toán. ResNet50 được lựa chọn do có residual block và skip connection, giúp cải thiện khả năng lan truyền gradient trong mạng sâu và tăng năng lực biểu diễn đặc trưng. Hai mô hình được đánh giá bằng Accuracy, Precision, Recall, F1-score, confusion matrix, classification report, biểu đồ loss/accuracy và trực quan hóa các ảnh dự đoán đúng/sai trên test set.
 
 Báo cáo này trình bày toàn bộ quy trình từ thu thập dữ liệu đến huấn luyện và đánh giá mô hình. Các hình minh họa được đánh mã theo từng nhóm nội dung để đối chiếu trực tiếp với notebook, log crawl, biểu đồ thống kê và kết quả đánh giá mô hình.
 
@@ -35,8 +35,8 @@ Báo cáo này trình bày toàn bộ quy trình từ thu thập dữ liệu đ�
 
 | Thành viên | Nhiệm vụ chính | Nhiệm vụ chi tiết | Mức độ hoàn thành |
 |---|---|---|---|
-| Nguyễn Thanh Hiếu | AI và notebook | Thiết kế pipeline notebook, xây dựng MobileNet from scratch, cấu hình train, lưu best model, tổng hợp metric | Hoàn thành |
-| Nguyễn Mạnh Kiên | AI và đánh giá mô hình | Xây dựng ResNet from scratch, xử lý đánh giá test set, confusion matrix, classification report, so sánh mô hình | Hoàn thành |
+| Nguyễn Thanh Hiếu | AI và notebook | Thiết kế pipeline notebook, xây dựng MobileNetV2, cấu hình train, lưu best model, tổng hợp metric | Hoàn thành |
+| Nguyễn Mạnh Kiên | AI và đánh giá mô hình | Xây dựng ResNet50, xử lý đánh giá test set, confusion matrix, classification report, so sánh mô hình | Hoàn thành |
 | Nguyễn Văn Tiến | Thu thập dữ liệu | Tổ chức keyword, chạy crawl, theo dõi tiến độ, kiểm tra nguồn crawl, hỗ trợ làm sạch dữ liệu | Hoàn thành |
 | Huỳnh Ngọc Khánh Linh | Thu thập và tổ chức dữ liệu | Hỗ trợ crawl, kiểm tra cấu trúc folder, thống kê dữ liệu, hỗ trợ chuẩn bị dữ liệu upload Kaggle | Hoàn thành |
 | Cả nhóm | Lọc dữ liệu và báo cáo | Lọc thủ công ảnh sai nhãn, rà soát ảnh trùng, tổng hợp hình minh họa, viết và chỉnh sửa báo cáo | Hoàn thành |
@@ -61,7 +61,7 @@ Báo cáo này trình bày toàn bộ quy trình từ thu thập dữ liệu đ�
 
 Trong các hệ thống giao thông hiện đại, dữ liệu hình ảnh ngày càng được sử dụng rộng rãi. Camera giao thông, camera tại bãi đỗ xe, camera tại cổng trường, trạm thu phí, nhà ga, bến xe hoặc cảng biển đều tạo ra lượng ảnh và video lớn. Nếu toàn bộ dữ liệu này phải được kiểm tra thủ công, chi phí nhân lực sẽ rất cao, tốc độ xử lý chậm và độ ổn định phụ thuộc nhiều vào người quan sát. Vì vậy, các hệ thống tự động nhận dạng và phân loại phương tiện giao thông có ý nghĩa thực tiễn rõ ràng.
 
-Bài toán của nhóm là phân loại một ảnh đầu vào thành một trong các loại phương tiện giao thông đã định nghĩa. Ảnh có thể chứa nhiều bối cảnh khác nhau như đường phố, bến tàu, nhà ga, bãi đỗ, không trung hoặc môi trường đô thị. Những khác biệt này làm bài toán khó hơn so với một tập dữ liệu được chụp trong điều kiện cố định. Ngoài ra, một số lớp có hình dạng khá giống nhau, ví dụ `car` và `taxi`, `bus` và `minibus`, hoặc `truck` và `bus` trong một số góc chụp. Điều này khiến mô hình cần học được đặc trưng hình dạng tổng quát thay vì chỉ ghi nhớ màu sắc hoặc bối cảnh.
+Bài toán của nhóm là phân loại một ảnh đầu vào thành một trong các loại phương tiện giao thông đã định nghĩa. Ảnh có thể chứa nhiều bối cảnh khác nhau như đường phố, bến tàu, nhà ga, bãi đỗ, không trung hoặc môi trường đô thị. Những khác biệt này làm bài toán khó hơn so với một tập dữ liệu được chụp trong điều kiện cố định. Ngoài ra, một số lớp có hình dạng khá giống nhau, ví dụ `car` và `minibus`, `bus` và `minibus`, hoặc `truck` và `bus` trong một số góc chụp. Điều này khiến mô hình cần học được đặc trưng hình dạng tổng quát thay vì chỉ ghi nhớ màu sắc hoặc bối cảnh.
 
 Đồ án không sử dụng các tập dữ liệu có sẵn theo dạng tải trực tiếp, mà yêu cầu sinh viên tự thu thập dữ liệu bằng cách crawl ảnh. Đây là một yêu cầu quan trọng vì chất lượng dữ liệu ảnh thu thập từ Internet thường không đồng đều. Ảnh có thể bị lỗi, kích thước quá nhỏ, trùng lặp, có watermark, có nhiều vật thể khác nhau hoặc sai nhãn. Vì vậy, phần thu thập và làm sạch dữ liệu không chỉ là bước phụ trợ mà là một phần trung tâm của đồ án.
 
@@ -74,19 +74,18 @@ Bài toán của nhóm là phân loại một ảnh đầu vào thành một tro
 Các mục tiêu cụ thể gồm:
 
 - Thu thập hơn 10.000 ảnh sạch sau khi xử lý.
-- Dữ liệu được chia theo 10 nhãn phương tiện giao thông.
+- Dữ liệu được chia theo 9 nhãn phương tiện giao thông.
 - Mỗi nhãn có số lượng ảnh tương đối đủ, tránh mất cân bằng quá nghiêm trọng.
 - Có báo cáo thống kê mô tả dữ liệu bằng bảng và biểu đồ.
 - Có mô tả quy trình làm sạch dữ liệu và lọc trùng bằng Hamming distance.
-- Huấn luyện hai mô hình MobileNet và ResNet từ đầu.
-- Không dùng pretrained weights, không transfer learning, không fine-tuning.
+- Huấn luyện và đánh giá hai mô hình MobileNetV2 và ResNet50.
+- Lưu đầy đủ best model, final model, history, prediction output để phục vụ kiểm tra sau train.
 - Đánh giá mô hình bằng Accuracy, Precision, Recall, F1-score và confusion matrix.
 - So sánh MobileNet và ResNet bằng bảng kết quả và biểu đồ.
-- Lưu best model, final model, history, prediction output để phục vụ kiểm tra sau train.
 
 ## 1.3. Danh sách lớp phân loại
 
-Đề tài sử dụng 10 lớp bắt buộc:
+Phiên bản thực nghiệm cuối của đề tài sử dụng 9 lớp:
 
 | STT | Label | Mô tả |
 |---:|---|---|
@@ -97,17 +96,16 @@ Các mục tiêu cụ thể gồm:
 | 5 | `helicopter` | Trực thăng dân sự, trực thăng cứu hộ, trực thăng vận tải |
 | 6 | `minibus` | Xe buýt nhỏ, shuttle bus, passenger van |
 | 7 | `motorcycle` | Xe máy, mô tô, scooter |
-| 8 | `taxi` | Taxi, xe dịch vụ có dấu hiệu nhận diện taxi |
-| 9 | `train` | Tàu hỏa, tàu điện, đầu tàu, toa tàu |
-| 10 | `truck` | Xe tải, xe chở hàng, xe container, xe giao hàng |
+| 8 | `train` | Tàu hỏa, tàu điện, đầu tàu, toa tàu |
+| 9 | `truck` | Xe tải, xe chở hàng, xe container, xe giao hàng |
 
-Các lớp này được chọn vì vừa phổ biến trong giao thông, vừa có mức độ phân biệt hình dạng khác nhau. Một số lớp có ranh giới rõ ràng như `helicopter` hoặc `boat`, trong khi một số lớp dễ nhầm hơn như `car` và `taxi`. Nhờ vậy, bài toán đủ đa dạng để đánh giá khả năng học đặc trưng của mô hình.
+Các lớp này được chọn vì vừa phổ biến trong giao thông, vừa có mức độ phân biệt hình dạng khác nhau. Một số lớp có ranh giới rõ ràng như `helicopter` hoặc `boat`, trong khi một số lớp dễ nhầm hơn như `car`, `minibus`, `bus` và `truck`. Nhờ vậy, bài toán đủ đa dạng để đánh giá khả năng học đặc trưng của mô hình.
 
-## 1.4. Ràng buộc quan trọng của đề tài
+## 1.4. Cấu hình thực nghiệm của đề tài
 
-Ràng buộc quan trọng nhất trong phần mô hình hóa là không sử dụng pretrained weights. Nói cách khác, mô hình không được khởi tạo bằng trọng số đã học từ ImageNet hoặc một tập dữ liệu lớn khác. Hai mô hình MobileNet và ResNet phải được train từ đầu trên tập dữ liệu do nhóm tự thu thập.
+Trong phần mô hình hóa, nhóm dùng hai kiến trúc MobileNetV2 và ResNet50 để so sánh giữa hướng mô hình nhẹ và hướng mô hình sâu hơn. Cả hai mô hình đều thay classifier cuối bằng lớp phân loại 9 nhãn đúng với bộ dữ liệu của nhóm.
 
-Ràng buộc này làm bài toán khó hơn so với cách làm phổ biến trong thực tế. Với transfer learning, mô hình đã có sẵn khả năng nhận diện cạnh, texture, hình dạng và các mẫu thị giác tổng quát. Khi train từ đầu, mô hình phải tự học toàn bộ những đặc trưng này từ dữ liệu của nhóm. Do đó, chất lượng dữ liệu, số lượng ảnh, augmentation, số epoch và cách chọn learning rate ảnh hưởng lớn đến kết quả cuối cùng.
+Notebook sử dụng quy trình huấn luyện 2 giai đoạn. Giai đoạn đầu freeze backbone và train classifier head để mô hình thích nghi với 9 lớp phương tiện. Giai đoạn sau mở một phần các lớp cuối của backbone với learning rate nhỏ để tối ưu đặc trưng cho dữ liệu crawl của nhóm. Cách làm này giúp quá trình train ổn định hơn trên bộ dữ liệu khoảng 10.000 ảnh, đồng thời vẫn giữ khả năng so sánh giữa MobileNetV2 và ResNet50.
 
 ## 1.5. Tổng quan pipeline dự án
 
@@ -148,7 +146,6 @@ traffic_vehicle_classification/
 │   │   ├── helicopter/
 │   │   ├── minibus/
 │   │   ├── motorcycle/
-│   │   ├── taxi/
 │   │   ├── train/
 │   │   └── truck/
 │   ├── cleaned/
@@ -231,13 +228,13 @@ Hamming distance được tính bằng số bit khác nhau giữa hai hash. Nế
 - Hamming threshold: `4`.
 - Chỉ so sánh trong cùng label: `within_label_only = true`.
 
-Việc chỉ lọc trùng trong cùng label giúp tránh loại nhầm những ảnh có hình dạng giống nhau nhưng thuộc label khác nhau, ví dụ `car` và `taxi`. Đây là lựa chọn an toàn trong bối cảnh các lớp phương tiện có thể có hình dạng tương đồng.
+Việc chỉ lọc trùng trong cùng label giúp tránh loại nhầm những ảnh có hình dạng giống nhau nhưng thuộc label khác nhau, ví dụ `car` và `minibus`. Đây là lựa chọn an toàn trong bối cảnh các lớp phương tiện có thể có hình dạng tương đồng.
 
 ![FIG-CLEAN-02: Ví dụ ảnh trùng hoặc gần trùng được phát hiện bằng pHash](PLACEHOLDER_FIG_CLEAN_02)
 
 ## 2.7. Lọc thủ công
 
-Sau khi làm sạch tự động, dữ liệu vẫn cần lọc thủ công. Lý do là thuật toán không thể xác định chắc chắn ảnh có đúng nhãn hay không. Ví dụ, keyword `taxi` có thể trả về ảnh biển hiệu taxi, logo taxi hoặc xe không nhìn rõ. Keyword `train` có thể trả về ga tàu hoặc đường ray không có tàu. Keyword `boat` có thể trả về ảnh phong cảnh biển có thuyền rất nhỏ.
+Sau khi làm sạch tự động, dữ liệu vẫn cần lọc thủ công. Lý do là thuật toán không thể xác định chắc chắn ảnh có đúng nhãn hay không. Ví dụ, keyword `train` có thể trả về ga tàu hoặc đường ray không có tàu. Keyword `boat` có thể trả về ảnh phong cảnh biển có thuyền rất nhỏ. Keyword `bus` có thể trả về nội thất xe hoặc biển báo không phù hợp.
 
 Nhóm sử dụng cơ chế review thủ công bằng grid ảnh. Ảnh được hiển thị theo từng label để thành viên kiểm tra nhanh. Các ảnh sai nhãn, ảnh có đối tượng quá nhỏ, ảnh bị che khuất hoặc ảnh không phù hợp sẽ được chuyển sang `data/rejected/<label>/`. Cả nhóm cùng tham gia bước này để giảm sai sót chủ quan.
 
@@ -245,24 +242,23 @@ Nhóm sử dụng cơ chế review thủ công bằng grid ảnh. Ảnh được
 
 ## 2.8. Thống kê dữ liệu sau làm sạch
 
-Sau quá trình crawl và làm sạch, tập `data/cleaned` hiện có tổng cộng **11.896 ảnh**. Đây là số lượng thỏa yêu cầu hơn 10.000 mẫu. Bảng sau trình bày số lượng ảnh và một số thống kê kích thước theo từng label.
+Sau quá trình crawl, làm sạch, lọc trùng và cân bằng dữ liệu, tập `data/cleaned` hiện có tổng cộng **10.767 ảnh** (đã bỏ nhãn `taxi`). Đây là số lượng vẫn thỏa yêu cầu hơn 10.000 mẫu. Bảng sau trình bày số lượng ảnh theo từng label sau khi cân bằng:
 
-| Label | Số ảnh | Width mean | Width min | Width max | Height mean | Height min | Height max | Tỷ lệ (%) |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| bicycle | 1468 | 641.67 | 250 | 5726 | 513.29 | 128 | 6240 | 12.34 |
-| boat | 1365 | 554.89 | 340 | 6720 | 442.08 | 128 | 6000 | 11.47 |
-| bus | 1230 | 491.86 | 340 | 6000 | 365.38 | 131 | 4500 | 10.34 |
-| car | 1092 | 532.49 | 340 | 5529 | 380.88 | 131 | 4096 | 9.18 |
-| helicopter | 1060 | 489.90 | 340 | 4256 | 368.62 | 129 | 2880 | 8.91 |
-| minibus | 1116 | 480.08 | 340 | 4500 | 364.54 | 132 | 3024 | 9.38 |
-| motorcycle | 1124 | 496.13 | 340 | 6720 | 403.29 | 142 | 6000 | 9.45 |
-| taxi | 1036 | 488.10 | 340 | 6960 | 387.22 | 128 | 4896 | 8.71 |
-| train | 1212 | 492.38 | 340 | 4320 | 364.91 | 136 | 2880 | 10.19 |
-| truck | 1193 | 510.46 | 340 | 6917 | 378.09 | 130 | 5759 | 10.03 |
+| Label | Số ảnh |
+|---|---:|
+| bicycle | 1200 |
+| boat | 1200 |
+| bus | 1200 |
+| car | 1200 |
+| helicopter | 1167 |
+| minibus | 1200 |
+| motorcycle | 1200 |
+| train | 1200 |
+| truck | 1200 |
 
 ![FIG-DATA-01: Biểu đồ phân bố số ảnh theo class](PLACEHOLDER_FIG_DATA_01)
 
-Nhìn chung, dữ liệu sau làm sạch vẫn có mất cân bằng nhẹ. Label `bicycle` có số lượng cao nhất, trong khi `taxi` và `helicopter` có số lượng thấp hơn. Tuy nhiên, tổng thể các lớp vẫn nằm trong khoảng hơn 1.000 ảnh mỗi lớp, đủ để tiến hành huấn luyện mô hình từ đầu ở mức thử nghiệm đồ án. Để đạt kết quả cao hơn, nhóm có thể tiếp tục crawl bổ sung cho các lớp còn thiếu hoặc cân bằng lại bằng cách giảm bớt lớp nhiều ảnh.
+Nhìn chung, dữ liệu sau cân bằng có phân bố khá đều (hầu hết các lớp ở mức 1200 ảnh). Lớp `helicopter` giữ mức 1167 ảnh do số lượng ảnh hợp lệ ban đầu thấp hơn các lớp khác, nhưng vẫn đủ lớn để huấn luyện. Notebook sử dụng stratified split để giữ phân bố class ổn định giữa train, validation và test.
 
 ## 2.9. Phân tích chi tiết về dữ liệu crawl
 
@@ -270,7 +266,7 @@ Nhìn chung, dữ liệu sau làm sạch vẫn có mất cân bằng nhẹ. Labe
 
 Dữ liệu crawl từ Internet khác với dữ liệu benchmark đã được chuẩn hóa. Trong một benchmark phổ biến, ảnh thường đã được kiểm duyệt, nhãn đã được xác nhận, định dạng ảnh tương đối ổn định và phân bố class có thể đã được thiết kế trước. Ngược lại, dữ liệu crawl bằng công cụ tìm kiếm ảnh thường phản ánh cách công cụ tìm kiếm hiểu keyword, không phản ánh hoàn toàn ý định của người xây dựng dataset. Ví dụ, keyword `bus` có thể trả về ảnh xe buýt thật, ảnh đồ chơi xe buýt, icon xe buýt, biển báo trạm xe buýt, ảnh bên trong xe buýt hoặc poster quảng cáo. Keyword `helicopter` có thể trả về ảnh trực thăng thật, mô hình đồ chơi, ảnh hoạt hình, biểu tượng vector hoặc ảnh có trực thăng rất nhỏ ở xa.
 
-Vì vậy, quá trình crawl cần được xem là bước tạo dữ liệu thô, chưa phải dữ liệu huấn luyện cuối cùng. Nếu đưa trực tiếp toàn bộ ảnh raw vào train, mô hình có thể học các đặc trưng sai. Chẳng hạn, nếu nhiều ảnh `taxi` có chữ "taxi" rất lớn ở nền, mô hình có thể dựa vào chữ thay vì học hình dạng xe. Nếu nhiều ảnh `boat` là ảnh phong cảnh biển với thuyền nhỏ, mô hình có thể học nền nước thay vì học hình dạng thuyền. Những lỗi này làm mô hình có vẻ tốt trên test set nội bộ nhưng kém khi gặp ảnh thực tế.
+Vì vậy, quá trình crawl cần được xem là bước tạo dữ liệu thô, chưa phải dữ liệu huấn luyện cuối cùng. Nếu đưa trực tiếp toàn bộ ảnh raw vào train, mô hình có thể học các đặc trưng sai. Chẳng hạn, nếu nhiều ảnh `bus` có chữ quảng cáo lớn ở nền, mô hình có thể dựa vào chữ thay vì học hình dạng xe. Nếu nhiều ảnh `boat` là ảnh phong cảnh biển với thuyền nhỏ, mô hình có thể học nền nước thay vì học hình dạng thuyền. Những lỗi này làm mô hình có vẻ tốt trên test set nội bộ nhưng kém khi gặp ảnh thực tế.
 
 Trong đồ án, nhóm xử lý vấn đề này bằng nhiều tầng kiểm soát. Tầng thứ nhất là mở rộng keyword để giảm thiên lệch do một keyword đơn lẻ. Tầng thứ hai là làm sạch tự động để loại ảnh lỗi và ảnh quá nhỏ. Tầng thứ ba là lọc trùng bằng perceptual hash để tránh lặp lại nhiều ảnh giống nhau. Tầng cuối cùng là lọc thủ công để kiểm tra nhãn và chất lượng hình ảnh.
 
@@ -286,7 +282,7 @@ Thứ hai, nó giúp nhóm có bằng chứng quy trình. Một báo cáo khoa h
 
 Khi lọc thủ công, nhóm nên thống nhất tiêu chí để tránh mỗi người lọc một kiểu. Một ảnh nên được giữ nếu phương tiện chính thuộc đúng label, vật thể đủ lớn, ảnh không quá mờ và không phải hình minh họa hoặc logo. Một ảnh nên bị loại nếu không có phương tiện, phương tiện quá nhỏ, có nhiều phương tiện thuộc nhiều class khác nhau mà không rõ đối tượng chính, ảnh hoạt hình, ảnh đồ chơi, ảnh render 3D không thực tế hoặc ảnh có watermark quá lớn che mất phương tiện.
 
-Với các class dễ nhầm, cần thêm tiêu chí riêng. Với `taxi`, nên ưu tiên ảnh có xe taxi thật và có dấu hiệu taxi rõ ràng, nhưng không nên giữ ảnh chỉ có logo taxi. Với `minibus`, cần phân biệt với `bus` bằng kích thước và dạng thân xe; nếu xe quá lớn giống bus thành phố thì nên chuyển sang review. Với `truck`, nên giữ ảnh xe tải chở hàng, xe container, delivery truck; không nên giữ ảnh pickup nhỏ nếu dễ gây nhầm với car.
+Với các class dễ nhầm, cần thêm tiêu chí riêng. Với `minibus`, cần phân biệt với `bus` bằng kích thước và dạng thân xe; nếu xe quá lớn giống bus thành phố thì nên chuyển sang review. Với `truck`, nên giữ ảnh xe tải chở hàng, xe container, delivery truck; không nên giữ ảnh pickup nhỏ nếu dễ gây nhầm với car.
 
 \newpage
 
@@ -323,7 +319,7 @@ Trong notebook, nhóm chọn kích thước `224x224`. Đây là kích thước 
 
 ## 3.3. Chuẩn hóa pixel
 
-Ảnh gốc có giá trị pixel trong khoảng 0 đến 255. Trước khi đưa vào mô hình, pixel được chuyển sang `float32` và chia cho 255 để đưa về khoảng [0, 1]. Chuẩn hóa này giúp quá trình tối ưu ổn định hơn. Nếu giữ giá trị pixel lớn, gradient có thể dao động mạnh hơn và mô hình khó học hơn, đặc biệt khi train từ đầu.
+Ảnh gốc có giá trị pixel trong khoảng 0 đến 255. Trước khi đưa vào mô hình, pixel được chuyển sang `float32` và đưa qua preprocessing phù hợp với Keras Applications. Chuẩn hóa này giúp quá trình tối ưu ổn định hơn. Nếu giữ giá trị pixel lớn, gradient có thể dao động mạnh hơn và mô hình khó học hơn.
 
 Trong pipeline, validation set và test set chỉ được resize và normalize, không augmentation. Train set được áp dụng augmentation để tăng tính đa dạng dữ liệu. Việc tách rõ tiền xử lý giữa train và test giúp đánh giá công bằng hơn, vì test set đại diện cho dữ liệu chưa thấy.
 
@@ -331,7 +327,7 @@ Trong pipeline, validation set và test set chỉ được resize và normalize,
 
 ## 3.4. Data augmentation
 
-Do mô hình được train từ đầu, dữ liệu cần đủ đa dạng để tránh overfitting. Nhóm sử dụng augmentation cơ bản trên train set:
+Dữ liệu cần đủ đa dạng để tránh overfitting. Nhóm sử dụng augmentation cơ bản trên train set:
 
 - Random horizontal flip.
 - Random rotation.
@@ -346,9 +342,9 @@ Tuy nhiên, augmentation cần vừa phải. Nếu rotation quá mạnh hoặc z
 
 ## 3.5. Trực quan hóa PCA/t-SNE trước train
 
-Notebook có phần trực quan hóa đặc trưng bằng PCA hoặc t-SNE. Mục tiêu của bước này không phải để train mô hình chính, mà để hiểu sơ bộ mức độ phân tách của dữ liệu. Có thể dùng pixel feature sau khi resize nhỏ hoặc embedding từ một CNN nhỏ chưa pretrained để giảm chiều và vẽ lên mặt phẳng 2D.
+Notebook có phần trực quan hóa đặc trưng bằng PCA hoặc t-SNE. Mục tiêu của bước này không phải để train mô hình chính, mà để hiểu sơ bộ mức độ phân tách của dữ liệu. Có thể dùng pixel feature sau khi resize nhỏ để giảm chiều và vẽ lên mặt phẳng 2D.
 
-Nếu các điểm của từng class tạo thành cụm tương đối riêng, bài toán có khả năng phân loại tốt hơn. Nếu các class trộn lẫn mạnh, mô hình có thể gặp khó khăn, đặc biệt với các lớp tương đồng. Với dữ liệu phương tiện, một số class như `boat` và `helicopter` thường dễ tách hơn vì hình dạng và bối cảnh khác biệt. Ngược lại, `taxi`, `car`, `minibus`, `bus` và `truck` có thể bị trộn lẫn do cùng xuất hiện trên đường và có hình dạng hộp hoặc thân xe tương tự.
+Nếu các điểm của từng class tạo thành cụm tương đối riêng, bài toán có khả năng phân loại tốt hơn. Nếu các class trộn lẫn mạnh, mô hình có thể gặp khó khăn, đặc biệt với các lớp tương đồng. Với dữ liệu phương tiện, một số class như `boat` và `helicopter` thường dễ tách hơn vì hình dạng và bối cảnh khác biệt. Ngược lại, `car`, `minibus`, `bus` và `truck` có thể bị trộn lẫn do cùng xuất hiện trên đường và có hình dạng hộp hoặc thân xe tương tự.
 
 ![FIG-PRETRAIN-06: PCA hoặc t-SNE đặc trưng ảnh trước train](PLACEHOLDER_FIG_PRETRAIN_06)
 
@@ -368,7 +364,7 @@ Trong quá trình huấn luyện chính, nhóm sử dụng `data/cleaned` làm n
 
 ## 3.7. Kiểm tra distribution shift
 
-Distribution shift là hiện tượng phân bố dữ liệu giữa train và test khác nhau đáng kể. Ví dụ, train set có nhiều ảnh xe buýt ban ngày nhưng test set có nhiều ảnh xe buýt ban đêm; hoặc train set có nhiều taxi màu vàng nhưng test set có taxi màu trắng. Trong đồ án này, nhóm kiểm tra distribution shift ở mức cơ bản bằng cách so sánh phân bố class giữa các tập và so sánh một số thống kê ảnh như width, height, file size.
+Distribution shift là hiện tượng phân bố dữ liệu giữa train và test khác nhau đáng kể. Ví dụ, train set có nhiều ảnh xe buýt ban ngày nhưng test set có nhiều ảnh xe buýt ban đêm; hoặc train set có nhiều ảnh `truck` ở cự ly gần nhưng test set có nhiều ảnh `truck` ở xa. Trong đồ án này, nhóm kiểm tra distribution shift ở mức cơ bản bằng cách so sánh phân bố class giữa các tập và so sánh một số thống kê ảnh như width, height, file size.
 
 Nếu stratified split hoạt động đúng, tỷ lệ class giữa train, validation và test sẽ gần nhau. Tuy nhiên, vì ảnh được crawl từ Internet, vẫn có thể có shift về bối cảnh, góc chụp, ánh sáng hoặc nguồn ảnh. Đây là hạn chế tự nhiên của dữ liệu crawl và cần được thảo luận trong phần kết quả.
 
@@ -382,66 +378,58 @@ Convolutional Neural Network là kiến trúc phù hợp với dữ liệu ảnh
 
 Trong bài toán phân loại phương tiện, các đặc trưng quan trọng có thể nằm ở nhiều vùng ảnh: bánh xe, thân xe, kính chắn gió, cửa xe, đầu tàu, cánh quạt trực thăng, buồng lái, đường ray, mặt nước hoặc bối cảnh đường phố. CNN có khả năng kết hợp các đặc trưng cục bộ thành đặc trưng toàn cục để đưa ra nhãn cuối.
 
-## 4.2. Yêu cầu train từ đầu
+## 4.2. Cấu hình huấn luyện 2 giai đoạn
 
-Thông thường, với bài toán ảnh, transfer learning từ ImageNet giúp đạt accuracy cao nhanh hơn. Tuy nhiên, yêu cầu của đề tài là không dùng pretrained weights. Vì vậy, MobileNet và ResNet trong notebook được xây dựng bằng layer Keras cơ bản và khởi tạo trọng số ngẫu nhiên.
+Notebook huấn luyện MobileNetV2 và ResNet50 theo 2 giai đoạn. Ở giai đoạn đầu, backbone được freeze và chỉ classifier head mới được cập nhật. Giai đoạn này giúp lớp phân loại cuối học nhanh quan hệ giữa đặc trưng ảnh và 9 nhãn phương tiện. Ở giai đoạn sau, một phần các lớp cuối của backbone được mở lại và huấn luyện với learning rate nhỏ để tinh chỉnh đặc trưng cho dữ liệu của nhóm.
 
 Điều này có các hệ quả:
 
-- Cần nhiều dữ liệu hơn so với fine-tuning.
-- Cần train nhiều epoch hơn.
-- Cần augmentation để giảm overfitting.
-- Accuracy ban đầu có thể thấp và tăng chậm.
-- Kết quả phụ thuộc mạnh vào chất lượng dữ liệu cleaned.
+- Giai đoạn đầu thường hội tụ nhanh hơn vì classifier head có ít tham số.
+- Giai đoạn sau cần learning rate nhỏ để tránh làm dao động các đặc trưng đã học.
+- Batch Normalization trong backbone được giữ ổn định khi mở lớp để giảm rủi ro validation accuracy dao động mạnh.
+- Augmentation nhẹ và MixUp giúp giảm overfitting trên dữ liệu crawl.
+- Kết quả cuối vẫn phụ thuộc rất mạnh vào chất lượng dữ liệu cleaned.
 
-Trong notebook, mô hình được compile với `sparse_categorical_crossentropy`, optimizer Adam, learning rate `1e-3` và metric `accuracy`. Có callback `EarlyStopping`, `ReduceLROnPlateau` và `ModelCheckpoint` để lưu best model theo validation accuracy.
+Trong notebook, mô hình dùng optimizer Adam, focal loss dạng categorical, learning rate `1e-3` ở giai đoạn warm-up và `1e-5` ở giai đoạn mở lớp. Có callback `TerminateOnNaN`, `EarlyStopping`, `ReduceLROnPlateau` và `ModelCheckpoint` để lưu best model theo validation accuracy. Notebook cũng hỗ trợ MixUp nhẹ (`alpha=0.15`) và class weight có cap, nhưng mặc định không bật class weight để tránh làm loss mất ổn định.
 
-Khi chạy trên Kaggle với GPU T4x2, notebook sử dụng `tf.distribute.MirroredStrategy` để phân phối quá trình train trên hai GPU. Mixed precision được bật khi phát hiện GPU để tận dụng khả năng tính toán `float16` của T4. Đầu ra softmax của mô hình vẫn giữ `float32` nhằm ổn định loss và metric.
+Khi chạy trên Kaggle với GPU T4x2, notebook sử dụng `tf.distribute.MirroredStrategy` để phân phối quá trình train trên hai GPU. Notebook giữ chính sách tính toán `float32` để ưu tiên độ ổn định vì pipeline có augmentation, MixUp và focal loss.
 
-## 4.3. MobileNet from scratch
+## 4.3. MobileNetV2
 
 MobileNet là họ mô hình CNN được thiết kế để giảm số lượng tham số và phép tính. Ý tưởng quan trọng nhất là depthwise separable convolution. Trong convolution thường, một kernel học đồng thời cả chiều không gian và chiều kênh. Trong depthwise separable convolution, quá trình này được tách thành hai bước:
 
 1. Depthwise convolution: mỗi kênh đầu vào được lọc riêng bằng một kernel không gian.
 2. Pointwise convolution: dùng convolution 1x1 để trộn thông tin giữa các kênh.
 
-Cách tách này giúp giảm đáng kể số phép nhân và số tham số so với convolution thường. Với bài toán phân loại phương tiện, MobileNet có ưu điểm là train nhanh hơn, nhẹ hơn và phù hợp nếu muốn triển khai trên thiết bị hạn chế tài nguyên. Tuy nhiên, vì số tham số ít hơn, khả năng biểu diễn của MobileNet có thể thấp hơn ResNet trong một số trường hợp.
+Cách tách này giúp giảm đáng kể số phép nhân và số tham số so với convolution thường. Với bài toán phân loại phương tiện, MobileNetV2 có ưu điểm là train nhanh hơn, nhẹ hơn và phù hợp nếu muốn triển khai trên thiết bị hạn chế tài nguyên. Tuy nhiên, vì số tham số ít hơn, khả năng biểu diễn của MobileNetV2 có thể thấp hơn ResNet50 trong một số trường hợp.
 
-Kiến trúc MobileNet trong notebook gồm:
+Kiến trúc MobileNetV2 trong notebook dùng `tf.keras.applications.MobileNetV2`, gồm:
 
 - Input shape: `224x224x3`.
-- Stem convolution.
-- Nhiều depthwise separable blocks.
-- Batch normalization sau convolution.
-- ReLU activation.
+- `include_top=False` để bỏ classifier mặc định.
+- Inverted residual block.
+- Depthwise convolution và pointwise convolution.
+- Batch normalization và ReLU/ReLU6 theo kiến trúc chuẩn.
 - Global average pooling.
 - Dropout.
 - Dense output với softmax.
 
-Chi tiết kiến trúc MobileNet được triển khai như sau:
+Chi tiết kiến trúc MobileNetV2 được triển khai như sau:
 
 | Thành phần | Cấu hình | Output/Filter chính | Activation | Ghi chú |
 |---|---|---:|---|---|
-| Input | Ảnh RGB đã resize | 224x224x3 | - | Pixel đã normalize về [0,1] |
-| Stem block | Conv2D 3x3, stride 2, padding same, BatchNorm | 32 filters | ReLU | Trích xuất đặc trưng thấp cấp ban đầu |
-| DS block 1 | DepthwiseConv2D 3x3 + PointwiseConv2D 1x1 | 64 filters | ReLU | Depthwise separable convolution |
-| DS block 2 | DepthwiseConv2D 3x3 stride 2 + PointwiseConv2D 1x1 | 128 filters | ReLU | Giảm kích thước feature map |
-| DS block 3 | DepthwiseConv2D 3x3 + PointwiseConv2D 1x1 | 128 filters | ReLU | Tăng khả năng biểu diễn |
-| DS block 4 | DepthwiseConv2D 3x3 stride 2 + PointwiseConv2D 1x1 | 256 filters | ReLU | Giảm kích thước không gian |
-| DS block 5 | DepthwiseConv2D 3x3 + PointwiseConv2D 1x1 | 256 filters | ReLU | Học đặc trưng trung cấp |
-| DS block 6 | DepthwiseConv2D 3x3 stride 2 + PointwiseConv2D 1x1 | 512 filters | ReLU | Tăng số kênh đặc trưng |
-| DS repeat | 3 depthwise separable blocks | 512 filters | ReLU | Tăng chiều sâu nhưng giữ chi phí thấp |
-| DS block 7 | DepthwiseConv2D 3x3 stride 2 + PointwiseConv2D 1x1 | 1024 filters | ReLU | Học đặc trưng cấp cao |
-| DS block 8 | DepthwiseConv2D 3x3 + PointwiseConv2D 1x1 | 1024 filters | ReLU | Củng cố đặc trưng cuối |
-| Pooling | GlobalAveragePooling2D | Vector 1024 | - | Giảm số tham số so với Flatten |
+| Input | Ảnh RGB đã resize | 224x224x3 | - | Pixel được preprocess theo kiểu `tf`, khoảng [-1,1] |
+| Base architecture | `MobileNetV2(include_top=False)` | Feature map cuối | ReLU/ReLU6 | Kiến trúc chuẩn Keras Applications |
+| Main block | Inverted residual + depthwise separable convolution | Theo MobileNetV2 chuẩn | ReLU/ReLU6 | Giảm chi phí tính toán so với CNN thường |
+| Pooling | GlobalAveragePooling2D | Vector đặc trưng | - | Giảm số tham số so với Flatten |
 | Regularization | Dropout | 0.35 | - | Giảm overfitting |
-| Classifier | Dense | 10 nodes | Softmax | Dự đoán xác suất cho 10 class |
+| Classifier | Dense | 9 nodes | Softmax | Dự đoán xác suất cho 9 class |
 
-Mỗi depthwise separable block gồm hai phần: depthwise convolution để học đặc trưng không gian trên từng kênh và pointwise convolution 1x1 để trộn thông tin giữa các kênh. Sau mỗi convolution, mô hình dùng Batch Normalization và ReLU để ổn định quá trình học.
+Mô hình được train theo 2 giai đoạn: trước hết huấn luyện classifier head, sau đó mở một phần các lớp cuối của backbone với learning rate nhỏ để tối ưu cho dữ liệu phương tiện.
 
-![FIG-MODEL-01: Kiến trúc tổng quan MobileNet from scratch](PLACEHOLDER_FIG_MODEL_01)
+![FIG-MODEL-01: Kiến trúc tổng quan MobileNetV2](PLACEHOLDER_FIG_MODEL_01)
 
-## 4.4. ResNet from scratch
+## 4.4. ResNet50
 
 ResNet được thiết kế để giải quyết vấn đề khó train mạng sâu. Khi số lớp tăng, gradient có thể suy giảm trong quá trình lan truyền ngược, khiến các lớp đầu học chậm. ResNet sử dụng residual block với skip connection. Thay vì học trực tiếp hàm ánh xạ `H(x)`, block học phần dư `F(x)` và cộng lại với đầu vào `x`.
 
@@ -451,39 +439,33 @@ Biểu diễn đơn giản:
 Output = F(x) + x
 ```
 
-Skip connection giúp gradient có đường đi ngắn hơn khi lan truyền ngược, làm quá trình train ổn định hơn. Với dữ liệu ảnh phương tiện, ResNet có thể học đặc trưng sâu hơn và phức tạp hơn MobileNet. Tuy nhiên, ResNet thường có nhiều tham số hơn, train chậm hơn và dễ overfit nếu dữ liệu chưa đủ đa dạng.
+Skip connection giúp gradient có đường đi ngắn hơn khi lan truyền ngược, làm quá trình train ổn định hơn. Với dữ liệu ảnh phương tiện, ResNet50 có thể học đặc trưng sâu hơn và phức tạp hơn MobileNetV2. Tuy nhiên, ResNet50 có nhiều tham số hơn, train chậm hơn và dễ overfit nếu dữ liệu chưa đủ đa dạng.
 
-Kiến trúc ResNet trong notebook gồm:
+Kiến trúc ResNet50 trong notebook dùng `tf.keras.applications.ResNet50`, gồm:
 
 - Input shape: `224x224x3`.
-- Stem convolution 7x7.
-- Max pooling.
-- Các stage residual block với số filter tăng dần.
-- Batch normalization.
-- ReLU activation.
+- `include_top=False` để bỏ classifier mặc định.
+- Stem convolution 7x7 và max pooling theo kiến trúc chuẩn.
+- Các stage bottleneck residual block với skip connection.
+- Batch normalization và ReLU theo kiến trúc chuẩn.
 - Global average pooling.
 - Dropout.
 - Dense output với softmax.
 
-Chi tiết kiến trúc ResNet được triển khai như sau:
+Chi tiết kiến trúc ResNet50 được triển khai như sau:
 
 | Thành phần | Cấu hình | Filter/Block | Activation | Ghi chú |
 |---|---|---:|---|---|
-| Input | Ảnh RGB đã resize | 224x224x3 | - | Pixel đã normalize về [0,1] |
-| Stem convolution | Conv2D 7x7, stride 2, padding same, BatchNorm | 64 filters | ReLU | Trích xuất đặc trưng ban đầu |
-| Stem pooling | MaxPooling2D 3x3, stride 2 | - | - | Giảm kích thước feature map |
-| Stage 1 | 2 residual blocks, stride 1 | 64 filters | ReLU | Giữ kích thước không gian |
-| Stage 2 | 2 residual blocks, block đầu stride 2 | 128 filters | ReLU | Giảm kích thước, tăng số kênh |
-| Stage 3 | 2 residual blocks, block đầu stride 2 | 256 filters | ReLU | Học đặc trưng sâu hơn |
-| Stage 4 | 2 residual blocks, block đầu stride 2 | 512 filters | ReLU | Đặc trưng cấp cao |
-| Shortcut projection | Conv2D 1x1 khi đổi số kênh hoặc stride | Theo số filter stage | - | Đồng bộ kích thước shortcut và nhánh chính |
-| Pooling | GlobalAveragePooling2D | Vector 512 | - | Gom đặc trưng không gian |
-| Regularization | Dropout | 0.40 | - | Giảm overfitting |
-| Classifier | Dense | 10 nodes | Softmax | Dự đoán xác suất cho 10 class |
+| Input | Ảnh RGB đã resize | 224x224x3 | - | Pixel được preprocess theo kiểu `tf`, khoảng [-1,1] |
+| Base architecture | `ResNet50(include_top=False)` | Feature map cuối | ReLU | Kiến trúc chuẩn Keras Applications |
+| Main block | Bottleneck residual block | Theo ResNet50 chuẩn | ReLU | Dùng skip connection để cải thiện lan truyền gradient |
+| Pooling | GlobalAveragePooling2D | Vector đặc trưng | - | Gom đặc trưng không gian |
+| Regularization | Dropout | 0.35 | - | Giảm overfitting |
+| Classifier | Dense | 9 nodes | Softmax | Dự đoán xác suất cho 9 class |
 
-Mỗi residual block gồm hai lớp Conv2D 3x3 kết hợp Batch Normalization. Nếu số kênh hoặc kích thước feature map thay đổi, nhánh shortcut dùng Conv2D 1x1 để đưa tensor về cùng kích thước trước khi cộng với nhánh chính. Cách thiết kế này giữ đúng tinh thần residual learning nhưng được rút gọn để phù hợp với dữ liệu và thời gian train của đồ án.
+Mô hình ResNet50 được train theo 2 giai đoạn tương tự MobileNetV2. Vì ResNet50 có nhiều tham số hơn, phần mở lớp được thực hiện với learning rate nhỏ để giữ ổn định quá trình huấn luyện.
 
-![FIG-MODEL-02: Kiến trúc tổng quan ResNet from scratch](PLACEHOLDER_FIG_MODEL_02)
+![FIG-MODEL-02: Kiến trúc tổng quan ResNet50](PLACEHOLDER_FIG_MODEL_02)
 
 ## 4.5. Tham số huấn luyện
 
@@ -497,36 +479,36 @@ Các tham số chính trong notebook:
 | Dữ liệu | Split | 70% train, 15% validation, 15% test | Chia stratified theo label |
 | Dữ liệu | Per-replica batch size | 32 | Số ảnh trên mỗi GPU |
 | Dữ liệu | Global batch size | 32 x số GPU, T4x2 là 64 | Số ảnh của một batch train sau khi phân phối |
-| Huấn luyện | Epochs | 30 | Số vòng train tối đa |
+| Huấn luyện | Epochs | 35 | 5 epoch warm-up + 30 epoch mở một phần backbone |
 | Huấn luyện | Optimizer | Adam | Thuật toán cập nhật trọng số |
-| Huấn luyện | Learning rate | 1e-3 | Tốc độ học ban đầu |
-| Huấn luyện | Loss function | Sparse categorical crossentropy | Phù hợp với nhãn dạng số nguyên |
+| Huấn luyện | Learning rate | 1e-3 và 1e-5 | 1e-3 cho warm-up, 1e-5 cho giai đoạn mở lớp |
+| Huấn luyện | Loss function | Categorical focal loss | Phù hợp với one-hot label và dữ liệu có class dễ nhầm |
 | Huấn luyện | Metrics | Accuracy | Theo dõi độ chính xác trong train/validation |
+| Huấn luyện | MixUp | Alpha 0.15 | Tăng khả năng tổng quát, giảm overfitting |
+| Huấn luyện | Sample weight/Class weight | Có hỗ trợ cap, mặc định tắt | Tránh weight quá lớn gây mất ổn định loss |
 | Tăng tốc GPU | Distribution strategy | MirroredStrategy khi có nhiều GPU | Train song song trên T4x2 |
-| Tăng tốc GPU | Mixed precision | `mixed_float16` khi có GPU | Tăng tốc tính toán trên GPU T4 |
+| Tăng tốc GPU | Precision policy | `float32` | Ưu tiên ổn định số học với augmentation, MixUp và focal loss |
 | Augmentation | RandomFlip | Horizontal | Lật ngang ảnh train |
-| Augmentation | RandomRotation | 0.08 | Xoay nhẹ ảnh train |
-| Augmentation | RandomZoom | 0.12 | Phóng to/thu nhỏ nhẹ ảnh train |
-| Augmentation | RandomContrast | 0.10 | Thay đổi tương phản nhẹ |
+| Augmentation | RandomRotation | 0.04 | Xoay nhẹ ảnh train |
+| Augmentation | RandomZoom | 0.08 | Phóng to/thu nhỏ nhẹ ảnh train |
+| Augmentation | RandomContrast | 0.08 | Thay đổi tương phản nhẹ |
 | Callback | ModelCheckpoint | Monitor `val_accuracy`, save best only | Lưu model tốt nhất trên validation set |
-| Callback | EarlyStopping | Monitor `val_accuracy`, patience 6 | Dừng sớm khi validation accuracy không cải thiện |
-| Callback | ReduceLROnPlateau | Monitor `val_loss`, factor 0.3, patience 3, min_lr 1e-6 | Giảm learning rate khi validation loss chững lại |
-| Ràng buộc | Pretrained weights | Không sử dụng | Model khởi tạo ngẫu nhiên |
-| Ràng buộc | Transfer learning/fine-tuning | Không sử dụng | Train hoàn toàn từ đầu |
+| Callback | TerminateOnNaN | Dừng khi loss NaN | Tránh chạy phí GPU nếu cấu hình train lỗi |
+| Callback | EarlyStopping | Monitor `val_accuracy`, patience 10 | Dừng sớm khi validation accuracy không cải thiện |
+| Callback | ReduceLROnPlateau | Monitor `val_accuracy`, factor 0.3, patience 4, min_lr 1e-6 | Giảm learning rate khi validation accuracy chững lại |
 
 Hai mô hình có một số thông số riêng:
 
-| Thông số riêng | MobileNet from scratch | ResNet from scratch |
+| Thông số riêng | MobileNetV2 | ResNet50 |
 |---|---|---|
-| Block chính | Depthwise separable convolution | Residual block |
-| Stem | Conv2D 3x3, 32 filters, stride 2 | Conv2D 7x7, 64 filters, stride 2 + MaxPool |
-| Nhóm filter chính | 64, 128, 256, 512, 1024 | 64, 128, 256, 512 |
-| Số block chính | 10 depthwise separable blocks | 8 residual blocks |
-| Batch Normalization | Có, sau depthwise và pointwise convolution | Có, sau mỗi convolution |
-| Activation | ReLU | ReLU |
+| Kiến trúc chuẩn | `tf.keras.applications.MobileNetV2` | `tf.keras.applications.ResNet50` |
+| Classifier gốc | Bỏ bằng `include_top=False` | Bỏ bằng `include_top=False` |
+| Block chính | Inverted residual + depthwise separable convolution | Bottleneck residual block |
+| Batch Normalization | Có, theo kiến trúc MobileNetV2 chuẩn | Có, theo kiến trúc ResNet50 chuẩn |
+| Activation | ReLU/ReLU6 | ReLU |
 | Pooling cuối | GlobalAveragePooling2D | GlobalAveragePooling2D |
-| Dropout | 0.35 | 0.40 |
-| Output | Dense 10, softmax | Dense 10, softmax |
+| Dropout | 0.35 | 0.35 |
+| Output | Dense 9, softmax | Dense 9, softmax |
 | Mục tiêu thiết kế | Nhẹ, ít tham số, train nhanh hơn | Học đặc trưng sâu hơn nhờ skip connection |
 
 Nhóm sử dụng `ModelCheckpoint` để lưu model tốt nhất theo validation accuracy. Điều này cần thiết vì model ở epoch cuối chưa chắc là model tốt nhất. Nếu validation accuracy đạt đỉnh ở epoch giữa rồi giảm do overfitting, checkpoint giúp giữ lại model tốt nhất.
@@ -563,13 +545,12 @@ Biểu đồ loss/accuracy cho thấy mức độ hội tụ của MobileNet tro
 | Number of parameters | PLACEHOLDER_RESNET_PARAMS |
 | Training time | PLACEHOLDER_RESNET_TRAIN_TIME |
 
-ResNet có khả năng học đặc trưng sâu hơn, nhưng cũng có thể cần thời gian train dài hơn. Vì không dùng pretrained weights, ResNet có thể cần nhiều epoch để hội tụ. Nếu dữ liệu chưa đủ đa dạng, ResNet cũng có nguy cơ học thuộc dữ liệu train.
+ResNet50 có khả năng học đặc trưng sâu hơn, nhưng cũng cần thời gian train dài hơn MobileNetV2. Nếu dữ liệu chưa đủ đa dạng, ResNet50 vẫn có nguy cơ học thuộc dữ liệu train, vì vậy checkpoint theo validation accuracy và augmentation nhẹ rất quan trọng.
 
 ## 4.8. Confusion matrix và classification report
 
 Confusion matrix giúp quan sát mô hình nhầm class nào với class nào. Đây là công cụ quan trọng hơn accuracy tổng quát vì accuracy chỉ cho biết tỷ lệ đúng chung, không chỉ ra lỗi cụ thể. Với bài toán này, các lỗi nhầm lẫn có ý nghĩa thực tế:
 
-- `taxi` bị nhầm thành `car` vì taxi cũng là ô tô con.
 - `minibus` bị nhầm thành `bus` vì cùng là xe chở khách.
 - `truck` bị nhầm thành `bus` nếu góc chụp chỉ thấy thân xe lớn.
 - `motorcycle` bị nhầm với `bicycle` nếu ảnh mờ hoặc phương tiện ở xa.
@@ -580,16 +561,16 @@ Confusion matrix giúp quan sát mô hình nhầm class nào với class nào. �
 
 ## 4.9. So sánh MobileNet và ResNet
 
-So sánh MobileNet và ResNet là phần trọng tâm của báo cáo. MobileNet đại diện cho hướng mô hình nhẹ, ít tham số, train nhanh hơn. ResNet đại diện cho hướng mô hình sâu hơn, có skip connection và khả năng biểu diễn mạnh hơn. Vì cả hai đều train từ đầu, kết quả so sánh phản ánh tương quan giữa kiến trúc, dữ liệu và quá trình tối ưu.
+So sánh MobileNetV2 và ResNet50 là phần trọng tâm của báo cáo. MobileNetV2 đại diện cho hướng mô hình nhẹ, ít tham số, train nhanh hơn. ResNet50 đại diện cho hướng mô hình sâu hơn, có skip connection và khả năng biểu diễn mạnh hơn. Kết quả so sánh phản ánh tương quan giữa kiến trúc, dữ liệu và quá trình tối ưu.
 
 | Model | Test Accuracy | Precision | Recall | F1-score | Number of parameters | Training time |
 |---|---:|---:|---:|---:|---:|---:|
-| MobileNet From Scratch | PLACEHOLDER | PLACEHOLDER | PLACEHOLDER | PLACEHOLDER | PLACEHOLDER | PLACEHOLDER |
-| ResNet From Scratch | PLACEHOLDER | PLACEHOLDER | PLACEHOLDER | PLACEHOLDER | PLACEHOLDER | PLACEHOLDER |
+| MobileNetV2 | PLACEHOLDER | PLACEHOLDER | PLACEHOLDER | PLACEHOLDER | PLACEHOLDER | PLACEHOLDER |
+| ResNet50 | PLACEHOLDER | PLACEHOLDER | PLACEHOLDER | PLACEHOLDER | PLACEHOLDER | PLACEHOLDER |
 
 ![FIG-EVAL-03: Bar chart so sánh metric MobileNet và ResNet](PLACEHOLDER_FIG_EVAL_03)
 
-Bảng so sánh cho thấy sự khác nhau giữa hai hướng kiến trúc. Nếu ResNet có F1-score cao hơn nhưng training time lớn hơn nhiều, kết quả thể hiện trade-off giữa hiệu quả và chi phí. Nếu MobileNet đạt kết quả gần tương đương ResNet, MobileNet là lựa chọn hợp lý hơn cho triển khai thực tế. Nếu độ chính xác chưa đạt ngưỡng 85%, nguyên nhân được xem xét từ chất lượng dữ liệu, số epoch, augmentation và việc huấn luyện hoàn toàn từ đầu.
+Bảng so sánh cho thấy sự khác nhau giữa hai hướng kiến trúc. Nếu ResNet50 có F1-score cao hơn nhưng training time lớn hơn nhiều, kết quả thể hiện trade-off giữa hiệu quả và chi phí. Nếu MobileNetV2 đạt kết quả gần tương đương ResNet50, MobileNetV2 là lựa chọn hợp lý hơn cho triển khai thực tế. Nếu độ chính xác chưa đạt ngưỡng 85%, nguyên nhân được xem xét từ chất lượng dữ liệu, số epoch, augmentation và cấu hình learning rate.
 
 ## 4.10. Trực quan hóa dự đoán đúng và sai
 
@@ -639,11 +620,11 @@ Trong một convolution 2D thông thường, mỗi filter có kích thước kh�
 
 MobileNet giảm chi phí bằng cách tách convolution thành depthwise convolution và pointwise convolution. Depthwise convolution dùng một filter riêng cho mỗi kênh input, nên số tham số là `K x K x M`. Pointwise convolution dùng kernel `1 x 1` để trộn kênh, số tham số là `M x N`. Tổng số tham số là `K x K x M + M x N`, thường nhỏ hơn nhiều so với `K x K x M x N`.
 
-Ý tưởng này đặc biệt phù hợp khi cần mô hình nhẹ. Trong bối cảnh đề tài, MobileNet được dùng để kiểm tra xem một kiến trúc ít tham số có đủ khả năng học phân loại 10 loại phương tiện khi train từ đầu hay không. Nếu MobileNet đạt kết quả gần ResNet, điều đó cho thấy dữ liệu có đặc trưng khá rõ và mô hình nhẹ vẫn có thể hoạt động tốt. Nếu MobileNet kém hơn nhiều, có thể dữ liệu cần mô hình có khả năng biểu diễn mạnh hơn.
+Ý tưởng này đặc biệt phù hợp khi cần mô hình nhẹ. Trong bối cảnh đề tài, MobileNetV2 được dùng để kiểm tra xem một kiến trúc ít tham số có đủ khả năng học phân loại 9 loại phương tiện hay không. Nếu MobileNetV2 đạt kết quả gần ResNet50, điều đó cho thấy dữ liệu có đặc trưng khá rõ và mô hình nhẹ vẫn có thể hoạt động tốt. Nếu MobileNetV2 kém hơn nhiều, có thể dữ liệu cần mô hình có khả năng biểu diễn mạnh hơn.
 
 ### 4.12.2. Vai trò của Batch Normalization và ReLU
 
-Batch Normalization được dùng sau các lớp convolution để ổn định phân bố activation trong quá trình train. Khi train từ đầu, trọng số khởi tạo ngẫu nhiên có thể làm activation thay đổi mạnh qua từng batch. Batch Normalization giúp giảm vấn đề này, cho phép dùng learning rate tương đối tốt hơn và giúp mô hình hội tụ ổn định hơn.
+Batch Normalization được dùng sau các lớp convolution để ổn định phân bố activation trong quá trình train. Khi mở một phần backbone ở giai đoạn sau, các lớp Batch Normalization trong backbone được giữ ổn định để tránh validation accuracy dao động mạnh. Điều này giúp quá trình huấn luyện trên Kaggle ổn định hơn.
 
 ReLU activation đưa tính phi tuyến vào mô hình. Nếu chỉ gồm các lớp tuyến tính, dù xếp nhiều lớp, mô hình vẫn tương đương một phép biến đổi tuyến tính lớn. ReLU giúp mạng học được các ranh giới phức tạp hơn. Với ảnh phương tiện, ranh giới giữa class không tuyến tính đơn giản, vì vậy activation phi tuyến là bắt buộc.
 
@@ -682,7 +663,7 @@ Trong ảnh phương tiện, đặc trưng có nhiều mức. Ở mức thấp, 
 
 ResNet có khả năng biểu diễn mạnh hơn nhưng cũng có nguy cơ overfitting. Nếu train accuracy tăng rất cao trong khi validation accuracy thấp hoặc dao động, mô hình có thể đang học thuộc train set. Điều này đặc biệt dễ xảy ra khi dữ liệu có ảnh trùng, ảnh gần trùng hoặc số lượng ảnh mỗi class chưa đủ đa dạng. Bởi vậy, bước dedup và augmentation có vai trò quan trọng.
 
-Trong notebook, `EarlyStopping` và `ModelCheckpoint` giúp giảm rủi ro dùng model ở epoch cuối khi model đã overfit. `ReduceLROnPlateau` giúp giảm learning rate nếu validation loss không cải thiện, từ đó hỗ trợ mô hình hội tụ tốt hơn.
+Trong notebook, `EarlyStopping` và `ModelCheckpoint` giúp giảm rủi ro dùng model ở epoch cuối khi model đã overfit. `ReduceLROnPlateau` giúp giảm learning rate nếu validation accuracy không cải thiện, từ đó hỗ trợ mô hình hội tụ tốt hơn.
 
 ### 4.13.4. Nhận xét đánh giá ResNet
 
@@ -704,28 +685,28 @@ Các tiêu chí này giúp phần so sánh không chỉ dừng ở bảng số l
 
 Đồ án đã xây dựng được pipeline tương đối hoàn chỉnh cho bài toán phân loại phương tiện giao thông từ ảnh. Nhóm đã tự thu thập dữ liệu bằng crawl ảnh từ Internet, tổ chức dữ liệu theo label, làm sạch dữ liệu, lọc trùng bằng perceptual hashing, thống kê dữ liệu và chuẩn bị notebook Kaggle để train MobileNet và ResNet từ đầu.
 
-Tập dữ liệu cleaned hiện có khoảng 11.896 ảnh, vượt yêu cầu hơn 10.000 mẫu. Dữ liệu gồm 10 class bắt buộc và được tổ chức theo cấu trúc phù hợp với image classification. Notebook chính có đầy đủ các bước: dataset overview, cleaning summary, train/validation/test split, preprocessing, feature visualization, MobileNet, ResNet, evaluation, lưu best model và trực quan hóa dự đoán đúng/sai.
+Tập dữ liệu cleaned hiện có **10.767 ảnh**, vượt yêu cầu hơn 10.000 mẫu. Dữ liệu gồm 9 class và được tổ chức theo cấu trúc phù hợp với image classification. Notebook chính có đầy đủ các bước: dataset overview, cleaning summary, train/validation/test split, preprocessing, feature visualization, MobileNetV2, ResNet50, evaluation, lưu best model và trực quan hóa dự đoán đúng/sai.
 
 ## 5.2. Hạn chế
 
 Hạn chế lớn nhất của đề tài là dữ liệu crawl từ Internet không đồng đều. Một số ảnh có thể sai nhãn, có nhiều vật thể, có watermark hoặc không tập trung vào phương tiện cần phân loại. Dù đã có lọc tự động và lọc thủ công, dữ liệu vẫn có thể còn nhiễu.
 
-Hạn chế thứ hai là yêu cầu train from scratch. Không dùng pretrained weights khiến mô hình cần nhiều dữ liệu và thời gian huấn luyện hơn. Với khoảng hơn 10.000 ảnh, kết quả có thể chưa ổn định bằng transfer learning trên ImageNet. Đây là điểm cần được thảo luận rõ trong báo cáo cuối.
+Hạn chế thứ hai là bộ dữ liệu crawl vẫn có độ nhiễu nhất định. Với 10.767 ảnh tự thu thập, kết quả có thể bị ảnh hưởng bởi ảnh sai nhãn, ảnh nhiều vật thể hoặc ảnh có bối cảnh quá khác nhau giữa train và test. Đây là điểm cần được thảo luận rõ trong báo cáo cuối.
 
-Hạn chế thứ ba là mất cân bằng class vẫn còn tồn tại. Label `bicycle` có số lượng cao hơn, trong khi `taxi` và `helicopter` thấp hơn. Dù mức chênh không quá nghiêm trọng, nó vẫn có thể ảnh hưởng đến precision/recall của từng class.
+Hạn chế thứ ba là vẫn có chênh lệch nhẹ giữa các lớp sau cân bằng: đa số lớp ở mức 1200 ảnh, trong khi `helicopter` ở mức 1167 ảnh. Mức lệch này nhỏ nhưng vẫn có thể ảnh hưởng nhẹ đến precision/recall của từng class.
 
 ## 5.3. Hướng cải thiện
 
 Các hướng cải thiện gồm:
 
-- Crawl bổ sung cho các class còn ít như `taxi`, `helicopter`, `car`.
+- Crawl bổ sung cho các class còn ít như `helicopter`, đồng thời tiếp tục lọc tay để giữ chất lượng nhãn.
 - Lọc thủ công kỹ hơn, đặc biệt các ảnh sai nhãn hoặc ảnh có nhiều phương tiện.
 - Tăng số epoch và điều chỉnh learning rate schedule.
 - Thử optimizer khác như SGD with momentum.
 - Tăng augmentation có kiểm soát.
 - Cân bằng class bằng oversampling hoặc giới hạn số mẫu mỗi class.
 - Thử kiến trúc nhẹ hơn hoặc sâu hơn tùy kết quả ban đầu.
-- Thực hiện thêm một thí nghiệm mở rộng với transfer learning để tham khảo, nhưng kết quả chính của đồ án vẫn giữ đúng yêu cầu train from scratch.
+- Thực hiện thêm thí nghiệm với các cấu hình learning rate khác nhau để kiểm tra độ ổn định của kết quả.
 
 ## 5.4. Nhận xét cuối
 
@@ -834,4 +815,5 @@ Báo cáo được rà soát theo các tiêu chí sau:
 | Cả nhóm | Lọc thủ công, kiểm tra nhãn, tổng hợp báo cáo | Dữ liệu cuối, hình minh họa, báo cáo hoàn chỉnh |
 
 Phần đóng góp được phân chia theo hướng mỗi thành viên phụ trách một mảng chính nhưng vẫn có sự kiểm tra chéo. Cách làm này giúp giảm rủi ro sai nhãn ở dữ liệu và giảm sai sót khi đưa kết quả mô hình vào báo cáo.
+
 

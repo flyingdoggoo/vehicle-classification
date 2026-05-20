@@ -33,6 +33,7 @@ reports/*.csv
 reports/*.html
 reports/figures/*.png
 reports/figures/*.jpg
+traffic_vehicle_cleaned_kaggle.zip
 *.keras
 *.h5
 *.pb
